@@ -12,13 +12,19 @@ const Trust = () => {
     const [isMouseInCanvas, setIsMouseInCanvas] = useState(false);
 
     const WORDS = trustWords;
-    const COLORS = trustColors;
+    const COLORS = [
+        'rgba(59, 130, 246, 0.9)',  // Blue
+        'rgba(99, 102, 241, 0.9)',  // Indigo
+        'rgba(139, 92, 246, 0.9)',  // Purple
+        'rgba(236, 72, 153, 0.9)',  // Pink
+        'rgba(14, 165, 233, 0.9)',  // Sky
+    ];
 
     useEffect(() => {
         const updateDimensions = () => {
             setDimensions({
                 width: window.innerWidth,
-                height: window.innerWidth < 768 ? window.innerHeight * 0.6 : window.innerHeight * 0.7 // Increased height
+                height: window.innerWidth < 768 ? window.innerHeight * 0.4 : window.innerHeight * 0.7 // Reduced mobile height
             });
         };
 
@@ -31,57 +37,79 @@ const Trust = () => {
     useEffect(() => {
         if (!dimensions.width || !dimensions.height) return;
 
-        // Initialize engine
         engineRef.current = Engine.create();
         const engine = engineRef.current;
 
-        // Create boundaries
-        const ground = Bodies.rectangle(
-            dimensions.width / 3,
-            dimensions.height,
-            dimensions.width * 1.2,
-            60,
-            { isStatic: true }
-        );
+        // Add padding to keep boxes away from edges
+        const wallThickness = 60;
+        const padding = 20;
 
-        const wallLeft = Bodies.rectangle(
-            0,
-            dimensions.height / 3,
-            60,
-            dimensions.height * 1.2,
-            { isStatic: true }
-        );
+        // Create boundaries with adjusted positions
+        const walls = [
+            // Bottom wall
+            Bodies.rectangle(
+                dimensions.width / 2,
+                dimensions.height - wallThickness / 2,
+                dimensions.width - padding * 2,
+                wallThickness,
+                { isStatic: true }
+            ),
+            // Left wall
+            Bodies.rectangle(
+                -wallThickness / 2 + padding,
+                dimensions.height / 2,
+                wallThickness,
+                dimensions.height,
+                { isStatic: true }
+            ),
+            // Right wall - Adjusted position to be fully within screen
+            Bodies.rectangle(
+                dimensions.width - wallThickness / 2 - padding,
+                dimensions.height / 2,
+                wallThickness,
+                dimensions.height,
+                { isStatic: true }
+            ),
+            // Top wall
+            Bodies.rectangle(
+                dimensions.width / 2,
+                -wallThickness / 2 + padding,
+                dimensions.width - padding * 2,
+                wallThickness,
+                { isStatic: true }
+            )
+        ];
 
-        const wallRight = Bodies.rectangle(
-            dimensions.width,
-            dimensions.height / 2,
-            60,
-            dimensions.height * 1.2,
-            { isStatic: true }
-        );
+        World.add(engine.world, walls);
 
-        World.add(engine.world, [ground, wallLeft, wallRight]);
-
-        // Create words with initial positions spread across the canvas
+        // Adjust starting positions to account for padding
         wordsRef.current = WORDS.map((word, index) => {
             const isMobile = window.innerWidth < 768;
-            const width = isMobile ? (word.length * 12 + 40) : (word.length * 20 + 80);
-            const height = isMobile ? 60 : 100;
-            const columns = isMobile ? 2 : 3; // Fewer columns on mobile
+            const width = isMobile ? (word.length * 8 + 20) : (word.length * 20 + 80); // Smaller on mobile
+            const height = isMobile ? 40 : 100; // Smaller height on mobile
+            const columns = isMobile ? 3 : 3; // More columns on mobile for better layout
+            const rows = Math.ceil(WORDS.length / columns);
             const row = Math.floor(index / columns);
             const col = index % columns;
+
+            // Calculate safe starting positions with padding
+            const safeX = padding + width / 2 + (col * ((dimensions.width - padding * 2 - width) / (columns - 1)));
+            const safeY = padding + height / 2 + (row * ((dimensions.height - padding * 2 - height) / (rows + 1)));
 
             return {
                 word,
                 body: Bodies.rectangle(
-                    (col + 1) * (dimensions.width / (columns + 1)), // Spread horizontally
-                    dimensions.height * 0.3 + (row * (isMobile ? 100 : 150)), // Start from middle and spread down
+                    safeX,
+                    safeY,
                     width,
                     height,
                     {
                         friction: 0.3,
                         restitution: 0.6,
-                        density: isMobile ? 0.002 : 0.001 // Slightly higher density on mobile
+                        density: isMobile ? 0.003 : 0.001, // Adjusted density for mobile
+                        plugin: {
+                            attractors: []
+                        }
                     }
                 ),
                 color: COLORS[Math.floor(Math.random() * COLORS.length)],
@@ -111,10 +139,10 @@ const Trust = () => {
             return {
                 x,
                 y,
-                color,
-                velocity: { x: (Math.random() - 0.5) * 3, y: (Math.random() - 0.5) * 3 },
+                color: shiftColor(color, 30),  // Brighter particle color
+                velocity: { x: (Math.random() - 0.5) * 4, y: (Math.random() - 0.5) * 4 },
                 alpha: 1,
-                radius: Math.random() * 2 + 1
+                radius: Math.random() * 3 + 2  // Larger particles
             };
         };
 
@@ -143,7 +171,7 @@ const Trust = () => {
                 });
             }
 
-            // Draw words
+            // Draw words with enhanced styling
             wordsRef.current.forEach(wordObj => {
                 const { body, word, isExploding, explosionRadius } = wordObj;
                 const { x, y } = body.position;
@@ -166,23 +194,40 @@ const Trust = () => {
                     }
                 }
 
-                // Draw box
+                // Adjusted sizes for mobile
                 const isMobile = window.innerWidth < 768;
-                const fontSize = isMobile ? '24px' : '40px';
-                const width = isMobile ? (word.length * 12 + 40) : (word.length * 20 + 80);
-                const height = isMobile ? 60 : 100;
-                ctx.fillStyle = wordObj.color;
+                const fontSize = isMobile ? '16px' : '40px'; // Smaller font on mobile
+                const width = isMobile ? (word.length * 8 + 20) : (word.length * 20 + 80);
+                const height = isMobile ? 40 : 100;
+                const borderRadius = isMobile ? 8 : 20;
+
+                // Create gradient
+                const gradient = ctx.createLinearGradient(-width/2, -height/2, width/2, height/2);
+                gradient.addColorStop(0, wordObj.color);
+                gradient.addColorStop(1, shiftColor(wordObj.color, 20));
+
+                // Enhanced box shadow
+                ctx.shadowColor = wordObj.color;
+                ctx.shadowBlur = 20;
+                ctx.shadowOffsetX = 0;
+                ctx.shadowOffsetY = 2;
+
+                // Draw box with gradient
+                ctx.fillStyle = gradient;
                 ctx.beginPath();
-                ctx.roundRect(-width / 2, -height / 2, width, height, isMobile ? 12 : 20);
+                ctx.roundRect(-width / 2, -height / 2, width, height, borderRadius);
                 ctx.fill();
 
-                // Add glow effect
-                ctx.shadowColor = wordObj.color;
-                ctx.shadowBlur = 15;
+                // Add subtle border
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
 
-                // Draw text
+                // Enhanced text styling
                 ctx.fillStyle = '#ffffff';
-                ctx.font = `${fontSize} Arial`;
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+                ctx.shadowBlur = 4;
+                ctx.font = `bold ${fontSize} 'Inter', Arial`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText(word.toUpperCase(), 0, 0);
@@ -233,6 +278,16 @@ const Trust = () => {
             Engine.clear(engine);
         };
     }, [dimensions]);
+
+    // Add this helper function for color manipulation
+    const shiftColor = (rgba, amt) => {
+        const rgbaMatch = rgba.match(/[\d.]+/g);
+        if (rgbaMatch) {
+            const [r, g, b, a] = rgbaMatch.map(Number);
+            return `rgba(${Math.min(255, r + amt)}, ${Math.min(255, g + amt)}, ${Math.min(255, b + amt)}, ${a})`;
+        }
+        return rgba;
+    };
 
     // Modify the scroll effect to add bounce without changing initial positions
     useEffect(() => {
@@ -300,7 +355,7 @@ const Trust = () => {
         if (!engineRef.current) return;
 
         const word = WORDS[Math.floor(Math.random() * WORDS.length)];
-        const width = word.length * 20 + 80;
+        const width = word.length * 10 + 80;
         const height = 100;
 
         const newWord = {
@@ -339,9 +394,9 @@ const Trust = () => {
     };
 
     return (
-        <div className="relative w-screen h-[90vh] md:h-[100vh] bg-white">
-            <div className='w-screen h-[70vh] md:h-[90vh] flex justify-center items-start text-center cursor'>
-                <h1 style={{ userSelect: 'none' }} className='font-montserrat text-3xl md:text-7xl font-[400] w-full md:w-1/2 px-4 md:px-0 relative z-10 pt-8'>
+        <div className="relative w-screen h-[60vh] md:h-[100vh] bg-white"> {/* Adjusted mobile height */}
+            <div className='w-screen h-[40vh] md:h-[90vh] flex justify-center items-start text-center cursor'>
+                <h1 style={{ userSelect: 'none' }} className=' text-4xl md:text-7xl font-[600] w-full md:w-2/3 px-4 md:px-0 relative z-10 pt-4 md:pt-8'>
                     {truse.title}
                 </h1>
             </div>
@@ -354,7 +409,7 @@ const Trust = () => {
                 onMouseMove={handleMouseMove}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
-                className="absolute top-0 left-0 h-[80vh] md:h-[90vh]" // Increased canvas height
+                className="absolute top-0 left-0 w-[100vw] mx-auto h-[50vh] md:h-[90vh]" // Adjusted mobile height
             />
         </div>
     );

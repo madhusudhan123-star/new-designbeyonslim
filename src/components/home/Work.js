@@ -176,11 +176,11 @@ const Work = () => {
         // Create words with initial positions spread across the canvas
         wordsRef.current = WORDS.map((word, index) => {
             const isMobile = window.innerWidth < 768;
-            // Make box size responsive to screen width
-            const boxWidth = isMobile ? 
-                (word.length * 8 + 40) : // smaller on mobile
-                Math.min((word.length * 12 + 60), dimensions.width * 0.15); // limit max width on desktop
-            const boxHeight = isMobile ? 40 : 60; // smaller height on mobile
+            // Increased box sizes
+            const boxWidth = isMobile ?
+                (word.length * 15 + 60) : // Increased width on mobile
+                Math.min((word.length * 20 + 100), dimensions.width * 0.25); // Increased width and max width on desktop
+            const boxHeight = isMobile ? 60 : 80; // Increased height
             const columns = 3; // Number of columns to arrange words
             const row = Math.floor(index / columns);
             const col = index % columns;
@@ -189,7 +189,7 @@ const Work = () => {
                 word,
                 body: Bodies.rectangle(
                     (col + 1) * (dimensions.width / (columns + 1)), // Spread horizontally
-                    dimensions.height * 0.3 + (row * (isMobile ? 60 : 100)), // Start from middle and spread down
+                    dimensions.height * 0.3 + (row * (isMobile ? 80 : 120)), // Adjusted spacing
                     boxWidth,
                     boxHeight,
                     {
@@ -268,44 +268,46 @@ const Work = () => {
                 }
 
                 const isMobile = window.innerWidth < 768;
-                const fontSize = isMobile ? '16px' : '24px'; // smaller font size
-                const width = isMobile ? 
-                    (word.length * 8 + 40) : 
-                    Math.min((word.length * 12 + 60), dimensions.width * 0.15);
-                const height = isMobile ? 40 : 60;
+                // Calculate initial sizes
+                const desiredWidth = isMobile ?
+                    (word.length * 15 + 60) :
+                    Math.min((word.length * 20 + 100), dimensions.width * 0.25);
+                const height = isMobile ? 60 : 80;
 
-                // Create glass effect
-                // Add shadow
+                // Calculate font size to fit text
+                let fontSize = isMobile ? 20 : 32;
+                ctx.font = `${fontSize}px Arial`;
+                let textWidth = ctx.measureText(word.toUpperCase()).width;
+                const padding = 20; // Padding on each side
+
+                // Reduce font size until text fits
+                while (textWidth > (desiredWidth - padding * 2) && fontSize > 12) {
+                    fontSize--;
+                    ctx.font = `${fontSize}px Arial`;
+                    textWidth = ctx.measureText(word.toUpperCase()).width;
+                }
+
+                // Use the actual text width to set box width
+                const finalWidth = Math.max(desiredWidth, textWidth + padding * 2);
+
+                // Draw box with shadow effects
                 ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
                 ctx.shadowBlur = 15;
                 ctx.shadowOffsetX = 5;
                 ctx.shadowOffsetY = 5;
 
-                // Create gradient for glass effect
-                // const gradient = ctx.createLinearGradient(-width / 2, -height / 2, width / 2, height / 2);
-                const baseColor = wordObj.color;
-                // gradient.addColorStop(0, `${baseColor}55`);  // More transparent
-                // gradient.addColorStop(0.5, `${baseColor}99`); // Semi-transparent
-                // gradient.addColorStop(1, `${baseColor}55`);  // More transparent
-
-                // Draw glass box
-                ctx.fillStyle = baseColor;
+                // Draw the box
+                ctx.fillStyle = wordObj.color;
                 ctx.beginPath();
-                ctx.roundRect(-width / 2, -height / 2, width, height, isMobile ? 8 : 12);
+                ctx.roundRect(-finalWidth / 2, -height / 2, finalWidth, height, isMobile ? 8 : 12);
                 ctx.fill();
 
-                // Add highlight effect
-                ctx.strokeStyle = `${baseColor}33`;
-                ctx.lineWidth = 2;
-                ctx.stroke();
-
-                // Draw text with enhanced styling
-                // ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
-                // ctx.shadowBlur = 2;
+                // Draw text with adjusted settings
+                ctx.shadowColor = 'none';
                 ctx.shadowOffsetX = 0;
                 ctx.shadowOffsetY = 0;
                 ctx.fillStyle = '#ffffff';
-                ctx.font = `${fontSize} Arial`;
+                ctx.font = `${fontSize}px Arial`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText(word.toUpperCase(), 0, 0);
@@ -395,10 +397,11 @@ const Work = () => {
 
         const word = WORDS[Math.floor(Math.random() * WORDS.length)];
         const isMobile = window.innerWidth < 768;
-        const width = isMobile ? 
-            (word.length * 8 + 40) : 
-            Math.min((word.length * 12 + 60), dimensions.width * 0.15);
-        const height = isMobile ? 40 : 60;
+        // Increased sizes for clicked boxes
+        const width = isMobile ?
+            (word.length * 15 + 60) :
+            Math.min((word.length * 20 + 100), dimensions.width * 0.25);
+        const height = isMobile ? 60 : 80;
 
         const newWord = {
             word,

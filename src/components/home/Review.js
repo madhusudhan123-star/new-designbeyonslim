@@ -62,7 +62,7 @@ const Review = () => {
     }, []);
 
     return (
-        <div ref={reviewContainerRef} className="relative overflow-hidden bg-white py-20 border-white rounded-b-[20rem]">
+        <div ref={reviewContainerRef} className="relative overflow-hidden bg-white py-20 border-white rounded-b-[10rem]">
             <div className="sticky top-[50vh]">
                 <div className="overflow-hidden">
                     <div
