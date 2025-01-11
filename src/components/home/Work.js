@@ -11,14 +11,14 @@ const Work = () => {
 
     useEffect(() => {
         const config = {
-            rows: 40,
-            cols: 40,
-            dotSize: 4,
-            gap: 25,
-            mouseRadius: 150,
+            rows: window.innerWidth < 768 ? 20 : 40,
+            cols: window.innerWidth < 768 ? 20 : 40,
+            dotSize: window.innerWidth < 768 ? 3 : 4,
+            gap: window.innerWidth < 768 ? 15 : 25,
+            mouseRadius: window.innerWidth < 768 ? 100 : 150,
             baseOpacity: 0.3,
             maxOpacity: 1,
-            maxScale: 3
+            maxScale: window.innerWidth < 768 ? 2 : 3
         };
 
         const container = containerRef.current;
@@ -175,8 +175,12 @@ const Work = () => {
 
         // Create words with initial positions spread across the canvas
         wordsRef.current = WORDS.map((word, index) => {
-            const width = word.length * 20 + 80;
-            const height = 100;
+            const isMobile = window.innerWidth < 768;
+            // Make box size responsive to screen width
+            const boxWidth = isMobile ? 
+                (word.length * 8 + 40) : // smaller on mobile
+                Math.min((word.length * 12 + 60), dimensions.width * 0.15); // limit max width on desktop
+            const boxHeight = isMobile ? 40 : 60; // smaller height on mobile
             const columns = 3; // Number of columns to arrange words
             const row = Math.floor(index / columns);
             const col = index % columns;
@@ -185,13 +189,13 @@ const Work = () => {
                 word,
                 body: Bodies.rectangle(
                     (col + 1) * (dimensions.width / (columns + 1)), // Spread horizontally
-                    dimensions.height * 0.3 + (row * 150), // Start from middle and spread down
-                    width,
-                    height,
+                    dimensions.height * 0.3 + (row * (isMobile ? 60 : 100)), // Start from middle and spread down
+                    boxWidth,
+                    boxHeight,
                     {
                         friction: 0.3,
                         restitution: 0.6,
-                        density: 0.001
+                        density: isMobile ? 0.002 : 0.001
                     }
                 ),
                 color: COLORS[Math.floor(Math.random() * COLORS.length)],
@@ -263,8 +267,12 @@ const Work = () => {
                     }
                 }
 
-                const width = word.length * 20 + 100;
-                const height = 100;
+                const isMobile = window.innerWidth < 768;
+                const fontSize = isMobile ? '16px' : '24px'; // smaller font size
+                const width = isMobile ? 
+                    (word.length * 8 + 40) : 
+                    Math.min((word.length * 12 + 60), dimensions.width * 0.15);
+                const height = isMobile ? 40 : 60;
 
                 // Create glass effect
                 // Add shadow
@@ -283,7 +291,7 @@ const Work = () => {
                 // Draw glass box
                 ctx.fillStyle = baseColor;
                 ctx.beginPath();
-                ctx.roundRect(-width / 2, -height / 2, width, height, 20);
+                ctx.roundRect(-width / 2, -height / 2, width, height, isMobile ? 8 : 12);
                 ctx.fill();
 
                 // Add highlight effect
@@ -297,7 +305,7 @@ const Work = () => {
                 ctx.shadowOffsetX = 0;
                 ctx.shadowOffsetY = 0;
                 ctx.fillStyle = '#ffffff';
-                ctx.font = '30px Arial';
+                ctx.font = `${fontSize} Arial`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText(word.toUpperCase(), 0, 0);
@@ -386,8 +394,11 @@ const Work = () => {
         if (!engineRef.current) return;
 
         const word = WORDS[Math.floor(Math.random() * WORDS.length)];
-        const width = word.length * 20 + 80;
-        const height = 100;
+        const isMobile = window.innerWidth < 768;
+        const width = isMobile ? 
+            (word.length * 8 + 40) : 
+            Math.min((word.length * 12 + 60), dimensions.width * 0.15);
+        const height = isMobile ? 40 : 60;
 
         const newWord = {
             word,
@@ -399,7 +410,7 @@ const Work = () => {
                 {
                     friction: 0.3,
                     restitution: 0.6,
-                    density: 0.001
+                    density: isMobile ? 0.002 : 0.001
                 }
             ),
             color: COLORS[Math.floor(Math.random() * COLORS.length)],
@@ -425,15 +436,15 @@ const Work = () => {
     };
 
     return (
-        <div className="w-screen bg-black py-32 overflow-hidden flex flex-col gap-26 items-center justify-center">
+        <div className="w-screen bg-black py-16 md:py-32 overflow-hidden flex flex-col gap-16 md:gap-26 items-center justify-center">
             {/* bright dot's section */}
-            <div className='container mx-auto flex items-center justify-center'>
-                <div className='w-1/2'>
-                    <h1 className='text-white text-7xl text-start'>
+            <div className='container mx-auto flex flex-col md:flex-row items-center justify-center gap-8 md:gap-0 px-4 md:px-0'>
+                <div className='w-full md:w-1/2'>
+                    <h1 className='text-white text-3xl md:text-7xl text-center md:text-start mb-8 md:mb-0'>
                         1. Train Rec video AI (Takes 4 mins)
                     </h1>
                 </div>
-                <div className='w-1/2 h-[90vh] rounded-3xl relative overflow-hidden'>
+                <div className='w-full md:w-1/2 h-[80vh] md:h-[90vh] rounded-2xl md:rounded-3xl relative overflow-hidden'>
                     {/* Base container with blue background */}
                     <div className="absolute inset-0 bg-blue-500" />
 
@@ -448,11 +459,11 @@ const Work = () => {
                     />
 
                     {/* Image overlay with transparency */}
-                    <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 2 }}>
+                    <div className="absolute inset-0 flex items-center justify-center p-4 md:p-0" style={{ zIndex: 2 }}>
                         <img
                             src='https://sendpotion.com/assets/img/home/advantage/1.svg'
                             alt="Overlay"
-                            className="w-3/4 h-3/4 object-contain"
+                            className="w-full md:w-3/4 h-auto md:h-3/4 object-contain"
                             style={{
                                 filter: 'drop-shadow(0 0 10px rgba(255,255,255,0.3))'
                             }}
@@ -462,30 +473,18 @@ const Work = () => {
             </div>
 
             {/* Matter.js canvas */}
-            <div className='container mx-auto my-28 flex items-center justify-center'>
-                <div className='w-1/2'>
-                    <h1 className='text-white text-7xl text-start'>
+            <div className='container mx-auto my-8 md:my-28 flex flex-col md:flex-row items-center justify-center gap-8 md:gap-0 px-4 md:px-0'>
+                <div className='w-full md:w-1/2'>
+                    <h1 className='text-white text-3xl md:text-7xl text-center md:text-start mb-8 md:mb-0'>
                         1. Train Rec video AI (Takes 4 mins)
                     </h1>
                 </div>
-                <div className='w-1/2 relative bg-gray-500 overflow-hidden flex items-center justify-center'>
-                    {/* Glass effect container */}
-                    <div
-                        className="absolute inset-0 rounded-3xl"
-                    // style={{
-                    //     background: 'rgba(255, 255, 255, 0.1)',
-                    //     backdropFilter: 'blur(10px)',
-                    //     border: '1px solid rgba(255, 255, 255, 0.2)',
-                    //     boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
-                    // }}
-                    />
-
-                    {/* Canvas with physics */}
+                <div className='w-full md:w-1/2 h-[80vh] md:h-[90vh] relative bg-gray-500 overflow-hidden rounded-2xl md:rounded-3xl flex items-center justify-center'>
                     <canvas
                         ref={canvasRef}
                         style={{
                             width: '100%',
-                            height: '90vh',
+                            height: '100%',
                             background: 'transparent',
                             position: 'relative',
                             zIndex: 1,
@@ -501,11 +500,11 @@ const Work = () => {
                     />
 
                     {/* Image overlay */}
-                    <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 2, pointerEvents: 'none' }}>
+                    <div className="absolute inset-0 flex items-center justify-center p-4 md:p-0" style={{ zIndex: 2, pointerEvents: 'none' }}>
                         <img
                             src='https://sendpotion.com/assets/img/home/advantage/1.svg'
                             alt="Overlay"
-                            className="w-3/4 h-3/4 object-contain"
+                            className="w-full md:w-3/4 h-auto md:h-3/4 object-contain"
                             style={{
                                 filter: 'drop-shadow(0 0 10px rgba(255,255,255,0.3))'
                             }}

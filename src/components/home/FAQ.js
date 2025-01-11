@@ -21,17 +21,17 @@ const FAQ = () => {
             borderRadius: '2rem'
         });
 
-        // Pin the FAQ section
-        gsap.to(faqSection, {
-            scrollTrigger: {
-                trigger: faqSection,
-                start: 'top center',
-                end: '+=100%',
-                pin: true,
-                pinSpacing: true,
-                scrub: 1,
-            }
-        });
+        // // Pin the FAQ section
+        // gsap.to(faqSection, {
+        //     scrollTrigger: {
+        //         trigger: faqSection,
+        //         start: 'top center',
+        //         end: '+=100%',
+        //         pin: true,
+        //         pinSpacing: true,
+        //         scrub: 1,
+        //     }
+        // });
 
         // Move FAQ down instead of up
         gsap.to(container, {
@@ -55,7 +55,7 @@ const FAQ = () => {
     };
 
     return (
-        <div ref={faqRef} className="relative bg-white py-20 mt-20">
+        <div ref={faqRef} className="relative  bg-white py-20 mt-20">
             <div ref={containerRef} className="container mx-auto px-4">
                 <h2 className="text-5xl md:text-7xl font-bold text-black text-center mb-16">
                     Frequently Asked Questions

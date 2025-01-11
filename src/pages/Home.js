@@ -42,7 +42,7 @@ const Home = () => {
             {/* Hero Section */}
             <section className='min-h-screen relative z-20 bg-transparent'>
                 <div className='h-[20vh]'></div>
-                <div className='h-[65vh] flex flex-col items-center justify-center'>
+                <div className='h-[75vh] flex flex-col items-center justify-center'>
                     <h1 className='text-4xl md:text-7xl font-bold text-center'>
                         {header.title} <br />
                         <TypeAnimation

@@ -18,7 +18,7 @@ const Trust = () => {
         const updateDimensions = () => {
             setDimensions({
                 width: window.innerWidth,
-                height: window.innerHeight * 0.5 // Set to 50% of viewport height
+                height: window.innerWidth < 768 ? window.innerHeight * 0.6 : window.innerHeight * 0.7 // Increased height
             });
         };
 
@@ -64,9 +64,10 @@ const Trust = () => {
 
         // Create words with initial positions spread across the canvas
         wordsRef.current = WORDS.map((word, index) => {
-            const width = word.length * 20 + 80;
-            const height = 100;
-            const columns = 3; // Number of columns to arrange words
+            const isMobile = window.innerWidth < 768;
+            const width = isMobile ? (word.length * 12 + 40) : (word.length * 20 + 80);
+            const height = isMobile ? 60 : 100;
+            const columns = isMobile ? 2 : 3; // Fewer columns on mobile
             const row = Math.floor(index / columns);
             const col = index % columns;
 
@@ -74,13 +75,13 @@ const Trust = () => {
                 word,
                 body: Bodies.rectangle(
                     (col + 1) * (dimensions.width / (columns + 1)), // Spread horizontally
-                    dimensions.height * 0.3 + (row * 150), // Start from middle and spread down
+                    dimensions.height * 0.3 + (row * (isMobile ? 100 : 150)), // Start from middle and spread down
                     width,
                     height,
                     {
                         friction: 0.3,
                         restitution: 0.6,
-                        density: 0.001
+                        density: isMobile ? 0.002 : 0.001 // Slightly higher density on mobile
                     }
                 ),
                 color: COLORS[Math.floor(Math.random() * COLORS.length)],
@@ -103,6 +104,19 @@ const Trust = () => {
         });
 
         World.add(engine.world, mouseConstraint);
+
+        // Add particle system
+        const particles = [];
+        const createParticle = (x, y, color) => {
+            return {
+                x,
+                y,
+                color,
+                velocity: { x: (Math.random() - 0.5) * 3, y: (Math.random() - 0.5) * 3 },
+                alpha: 1,
+                radius: Math.random() * 2 + 1
+            };
+        };
 
         // Animation loop
         const animate = () => {
@@ -153,20 +167,55 @@ const Trust = () => {
                 }
 
                 // Draw box
+                const isMobile = window.innerWidth < 768;
+                const fontSize = isMobile ? '24px' : '40px';
+                const width = isMobile ? (word.length * 12 + 40) : (word.length * 20 + 80);
+                const height = isMobile ? 60 : 100;
                 ctx.fillStyle = wordObj.color;
                 ctx.beginPath();
-                const width = word.length * 20 + 80;
-                const height = 100;
-                ctx.roundRect(-width / 2, -height / 2, width, height, 20);
+                ctx.roundRect(-width / 2, -height / 2, width, height, isMobile ? 12 : 20);
                 ctx.fill();
+
+                // Add glow effect
+                ctx.shadowColor = wordObj.color;
+                ctx.shadowBlur = 15;
 
                 // Draw text
                 ctx.fillStyle = '#ffffff';
-                ctx.font = '40px Arial';
+                ctx.font = `${fontSize} Arial`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText(word.toUpperCase(), 0, 0);
 
+                ctx.restore();
+
+                // Add particles on movement
+                if (Math.abs(wordObj.body.velocity.x) > 0.5 || Math.abs(wordObj.body.velocity.y) > 0.5) {
+                    particles.push(createParticle(
+                        wordObj.body.position.x,
+                        wordObj.body.position.y,
+                        wordObj.color
+                    ));
+                }
+            });
+
+            // Draw particles
+            particles.forEach((particle, index) => {
+                particle.x += particle.velocity.x;
+                particle.y += particle.velocity.y;
+                particle.alpha -= 0.02;
+
+                if (particle.alpha <= 0) {
+                    particles.splice(index, 1);
+                    return;
+                }
+
+                ctx.save();
+                ctx.globalAlpha = particle.alpha;
+                ctx.fillStyle = particle.color;
+                ctx.beginPath();
+                ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+                ctx.fill();
                 ctx.restore();
             });
 
@@ -290,9 +339,9 @@ const Trust = () => {
     };
 
     return (
-        <div className="relative w-screen h-[80vh] bg-white">
-            <div className='w-screen h-[80vh] flex justify-center items-start text-center cursor'>
-                <h1 style={{ userSelect: 'none' }} className='font-montserrat text-7xl font-[400] w-1/2 relative z-10'>
+        <div className="relative w-screen h-[90vh] md:h-[100vh] bg-white">
+            <div className='w-screen h-[70vh] md:h-[90vh] flex justify-center items-start text-center cursor'>
+                <h1 style={{ userSelect: 'none' }} className='font-montserrat text-3xl md:text-7xl font-[400] w-full md:w-1/2 px-4 md:px-0 relative z-10 pt-8'>
                     {truse.title}
                 </h1>
             </div>
@@ -305,7 +354,7 @@ const Trust = () => {
                 onMouseMove={handleMouseMove}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
-                className="absolute top-0 left-0 h-[50vh]"
+                className="absolute top-0 left-0 h-[80vh] md:h-[90vh]" // Increased canvas height
             />
         </div>
     );
