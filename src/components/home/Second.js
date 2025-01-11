@@ -94,29 +94,29 @@ const Second = () => {
             });
         });
 
-        // // Smoother horizontal scroll
-        // gsap.to(horizontal, {
-        //     x: () => -(horizontal.scrollWidth - window.innerWidth),
-        //     ease: "none",
-        //     scrollTrigger: {
-        //         trigger: horizontal,
-        //         start: "top top",
-        //         end: () => `+=${horizontal.scrollWidth - window.innerWidth}`,
-        //         scrub: 1.5,
-        //         pin: true,
-        //         anticipatePin: 1,
-        //         fastScrollEnd: true,
-        //         invalidateOnRefresh: true,
-        //         onUpdate: self => {
-        //             if (self.progress === 1 || self.progress === 0) {
-        //                 gsap.to(horizontal, {
-        //                     duration: 0.5,
-        //                     ease: "power2.out"
-        //                 });
-        //             }
-        //         }
-        //     }
-        // });
+        // Smoother horizontal scroll
+        gsap.to(horizontal, {
+            x: () => -(horizontal.scrollWidth - window.innerWidth),
+            ease: "none",
+            scrollTrigger: {
+                trigger: horizontal,
+                start: "top top",
+                end: () => `+=${horizontal.scrollWidth - window.innerWidth}`,
+                scrub: 1.5,
+                pin: true,
+                anticipatePin: 1,
+                fastScrollEnd: true,
+                invalidateOnRefresh: true,
+                onUpdate: self => {
+                    if (self.progress === 1 || self.progress === 0) {
+                        gsap.to(horizontal, {
+                            duration: 0.5,
+                            ease: "power2.out"
+                        });
+                    }
+                }
+            }
+        });
 
         return () => {
             ScrollTrigger.getAll().forEach(t => t.kill());
@@ -157,22 +157,22 @@ const Second = () => {
                         <div className="slide w-screen h-[70vh] md:h-[80vh] bg-[#3B82F6] rounded-2xl md:rounded-3xl 
                             flex items-center justify-center p-4 md:p-8 transition-all duration-300
                             ">
-                            <h2 className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl text-center text-white font-bold">{second.slide1}</h2>
+                            <h2 className="text-6xl sm:text-6xl md:text-8xl lg:text-9xl text-center text-white font-bold">{second.slide1}</h2>
                         </div>
                         <div className="slide w-screen h-[70vh] md:h-[80vh] bg-[#3B82F6] rounded-2xl md:rounded-3xl 
                             flex items-center justify-center p-4 md:p-8 transition-all duration-300
                             ">
-                            <h2 className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl text-center text-white font-bold">{second.slide2}</h2>
+                            <h2 className="text-6xl sm:text-6xl md:text-8xl lg:text-9xl text-center text-white font-bold">{second.slide2}</h2>
                         </div>
                         <div className="slide w-screen h-[70vh] md:h-[80vh] bg-[#3B82F6] rounded-2xl md:rounded-3xl 
                             flex items-center justify-center p-4 md:p-8 transition-all duration-300
                             ">
-                            <h2 className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl text-center text-white font-bold">{second.slide3}</h2>
+                            <h2 className="text-6xl sm:text-6xl md:text-8xl lg:text-9xl text-center text-white font-bold">{second.slide3}</h2>
                         </div>
                         <div className="slide w-screen h-[70vh] md:h-[80vh] bg-[#3B82F6] rounded-2xl md:rounded-3xl 
                             flex items-center justify-center p-4 md:p-8 transition-all duration-300
                             ">
-                            <h2 className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl text-center text-white font-bold">{second.slide4}</h2>
+                            <h2 className="text-6xl sm:text-6xl md:text-8xl lg:text-9xl text-center text-white font-bold">{second.slide4}</h2>
                         </div>
                     </div>
                 </div>

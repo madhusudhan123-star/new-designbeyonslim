@@ -8,7 +8,7 @@ const NavbarComponent = () => {
 
     return (
         <nav className="w-full fixed z-50">
-            <div className="w-3/4 bg-blue-200 rounded-full mt-5 mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="w-4/4 md:w-3/4 bg-blue-200 rounded-full mt-5 mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
                     <div className="flex items-center">
                         <img src={logo} className='ml-2 w-28' />
@@ -48,9 +48,6 @@ const NavbarComponent = () => {
                                     {link.title}
                                 </a>
                             ))}
-                            <button className="w-full bg-purple-600 text-white px-6 py-2 rounded-full font-medium hover:bg-purple-700">
-                                LOGIN / SIGNUP
-                            </button>
                         </div>
                     </div>
                 )}

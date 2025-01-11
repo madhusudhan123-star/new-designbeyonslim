@@ -312,3 +312,9 @@ export const footerData = {
         }
     ]
 };
+
+
+export const work = {
+    title1: "Transform with Confidence: Choose Beyond Slim",
+    title2: "Experience the Beyond Slim Difference",
+}

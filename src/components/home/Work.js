@@ -2,7 +2,7 @@ import { gsap } from 'gsap';
 import React, { useEffect, useRef, useState } from 'react';
 import { Engine, World, Bodies, Body, Mouse, MouseConstraint } from 'matter-js';
 import { trustWords, trustColors, truse } from '../../utility/data';
-
+import { work } from '../../utility/data'
 
 const Work = () => {
     const containerRef = useRef(null);
@@ -444,10 +444,10 @@ const Work = () => {
             <div className='container mx-auto flex flex-col md:flex-row items-center justify-center gap-8 md:gap-0 px-4 md:px-0'>
                 <div className='w-full md:w-1/2'>
                     <h1 className='text-white text-3xl md:text-7xl text-center md:text-start mb-8 md:mb-0'>
-                        1. Train Rec video AI (Takes 4 mins)
+                        {work.title1}
                     </h1>
                 </div>
-                <div className='w-full md:w-1/2 h-[80vh] md:h-[90vh] rounded-2xl md:rounded-3xl relative overflow-hidden'>
+                <div className='w-full md:w-1/2 h-[50vh] md:h-[90vh] rounded-2xl md:rounded-3xl relative overflow-hidden'>
                     {/* Base container with blue background */}
                     <div className="absolute inset-0 bg-blue-500" />
 
@@ -479,10 +479,10 @@ const Work = () => {
             <div className='container mx-auto my-8 md:my-28 flex flex-col md:flex-row items-center justify-center gap-8 md:gap-0 px-4 md:px-0'>
                 <div className='w-full md:w-1/2'>
                     <h1 className='text-white text-3xl md:text-7xl text-center md:text-start mb-8 md:mb-0'>
-                        1. Train Rec video AI (Takes 4 mins)
+                        {work.title2}
                     </h1>
                 </div>
-                <div className='w-full md:w-1/2 h-[80vh] md:h-[90vh] relative bg-gray-500 overflow-hidden rounded-2xl md:rounded-3xl flex items-center justify-center'>
+                <div className='w-full md:w-1/2 h-[50vh] md:h-[90vh] relative bg-gray-500 overflow-hidden rounded-2xl md:rounded-3xl flex items-center justify-center'>
                     <canvas
                         ref={canvasRef}
                         style={{
