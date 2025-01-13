@@ -8,10 +8,12 @@ const NavbarComponent = () => {
 
     return (
         <nav className="w-full fixed z-50">
-            <div className="w-4/4 md:w-3/4 bg-blue-200 rounded-full mt-5 mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="w-4/4 md:w-2/4 bg-blue-200 rounded-full mt-5 mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
                     <div className="flex items-center">
-                        <img src={logo} className='ml-2 w-28' />
+                        <a href='/'>
+                            <img src={logo} className='ml-2 w-28' />
+                        </a>
                     </div>
 
                     {/* Desktop Navigation */}

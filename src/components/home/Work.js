@@ -3,6 +3,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Engine, World, Bodies, Body, Mouse, MouseConstraint } from 'matter-js';
 import { trustWords, trustColors, truse } from '../../utility/data';
 import { work } from '../../utility/data'
+import home1 from '../../assets/home1.JPG'
+import home2 from '../../assets/home2.JPG'
+
 
 const Work = () => {
     const containerRef = useRef(null);
@@ -464,7 +467,7 @@ const Work = () => {
                     {/* Image overlay with transparency */}
                     <div className="absolute inset-0 flex items-center justify-center p-4 md:p-0" style={{ zIndex: 2 }}>
                         <img
-                            src='https://sendpotion.com/assets/img/home/advantage/1.svg'
+                            src={home1}
                             alt="Overlay"
                             className="w-full md:w-3/4 h-auto md:h-3/4 object-contain"
                             style={{
@@ -505,9 +508,9 @@ const Work = () => {
                     {/* Image overlay */}
                     <div className="absolute inset-0 flex items-center justify-center p-4 md:p-0" style={{ zIndex: 2, pointerEvents: 'none' }}>
                         <img
-                            src='https://sendpotion.com/assets/img/home/advantage/1.svg'
+                            src={home2}
                             alt="Overlay"
-                            className="w-full md:w-3/4 h-auto md:h-3/4 object-contain"
+                            className="w-full md:w-3/4 h-auto md:h-3/4 object-contain rounded-2xl md:rounded-3xl"
                             style={{
                                 filter: 'drop-shadow(0 0 10px rgba(255,255,255,0.3))'
                             }}
