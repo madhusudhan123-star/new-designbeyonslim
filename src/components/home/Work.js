@@ -3,8 +3,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Engine, World, Bodies, Body, Mouse, MouseConstraint } from 'matter-js';
 import { trustWords, trustColors, truse } from '../../utility/data';
 import { work } from '../../utility/data'
-import home1 from '../../assets/home1.JPG'
-import home2 from '../../assets/home2.JPG'
+import home1 from '../../assets/test1.mp4'
+import home2 from '../../assets/test2.mp4'
 
 
 const Work = () => {
@@ -19,13 +19,27 @@ const Work = () => {
             dotSize: window.innerWidth < 768 ? 3 : 4,
             gap: window.innerWidth < 768 ? 15 : 25,
             mouseRadius: window.innerWidth < 768 ? 100 : 150,
-            baseOpacity: 0.3,
+            baseOpacity: 0.8,           // Increased base opacity
             maxOpacity: 1,
-            maxScale: window.innerWidth < 768 ? 2 : 3
+            maxScale: window.innerWidth < 768 ? 3 : 4,
+            glowIntensity: 8           // Added glow intensity config
+        };
+
+        // Pre-calculate styles for better performance
+        const baseStyles = {
+            position: 'absolute',
+            width: `${config.dotSize}px`,
+            height: `${config.dotSize}px`,
+            borderRadius: '50%',
+            backgroundColor: '#ffffff',
+            opacity: config.baseOpacity,
+            transform: 'translate3d(0,0,0)', // Enable GPU acceleration
+            willChange: 'transform, opacity, box-shadow' // Hint browser for optimization
         };
 
         const container = containerRef.current;
         const dots = [];
+        const fragment = document.createDocumentFragment(); // Use fragment for batch DOM updates
 
         // Center the container in the purple section
         const purpleSection = container.parentElement;
@@ -44,47 +58,61 @@ const Work = () => {
         for (let row = 0; row < config.rows; row++) {
             for (let col = 0; col < config.cols; col++) {
                 const dot = document.createElement('div');
-                dot.className = 'dot absolute rounded-full bg-white';
-                dot.style.width = `${config.dotSize}px`;
-                dot.style.height = `${config.dotSize}px`;
+                Object.assign(dot.style, baseStyles);
                 dot.style.left = `${startX + (col * config.gap)}px`;
                 dot.style.top = `${startY + (row * config.gap)}px`;
-                dot.style.opacity = config.baseOpacity;
-                container.appendChild(dot);
+                fragment.appendChild(dot);
                 dots.push(dot);
             }
         }
 
+        container.appendChild(fragment);
         dotsRef.current = dots;
+
+        let rafId;
+        let lastMouseX = 0;
+        let lastMouseY = 0;
+        const threshold = 0.5; // Movement threshold to trigger update
 
         // Optimized animation function
         const animateDots = () => {
             const { x, y } = mouseRef.current;
 
-            dots.forEach(dot => {
-                const rect = dot.getBoundingClientRect();
-                const dotX = rect.left + rect.width / 2;
-                const dotY = rect.top + rect.height / 2;
+            // Only update if mouse moved significantly
+            if (Math.abs(x - lastMouseX) > threshold || Math.abs(y - lastMouseY) > threshold) {
+                dots.forEach(dot => {
+                    const rect = dot.getBoundingClientRect();
+                    const dotX = rect.left + rect.width / 2;
+                    const dotY = rect.top + rect.height / 2;
+                    const distX = x - dotX;
+                    const distY = y - dotY;
+                    const distance = Math.sqrt(distX * distX + distY * distY);
 
-                const distX = x - dotX;
-                const distY = y - dotY;
-                const distance = Math.sqrt(distX * distX + distY * distY);
+                    if (distance < config.mouseRadius) {
+                        const scale = 1 + (1 - distance / config.mouseRadius) * config.maxScale;
+                        const opacity = Math.min(1, config.baseOpacity +
+                            (1 - distance / config.mouseRadius));
 
-                if (distance < config.mouseRadius) {
-                    const scale = 1 + (1 - distance / config.mouseRadius) * config.maxScale;
-                    const opacity = config.baseOpacity +
-                        (1 - distance / config.mouseRadius) * (config.maxOpacity - config.baseOpacity);
+                        dot.style.transform = `translate3d(0,0,0) scale(${scale})`;
+                        dot.style.opacity = opacity;
+                        dot.style.boxShadow = `0 0 ${scale * config.glowIntensity}px rgba(255,255,255,${opacity})`;
+                    } else {
+                        if (dot.style.transform !== 'translate3d(0,0,0) scale(1)') {
+                            dot.style.transform = 'translate3d(0,0,0) scale(1)';
+                            dot.style.opacity = config.baseOpacity;
+                            dot.style.boxShadow = '0 0 4px rgba(255,255,255,0.4)';
+                        }
+                    }
+                });
 
-                    dot.style.transform = `scale(${scale})`;
-                    dot.style.opacity = opacity;
-                } else {
-                    dot.style.transform = 'scale(1)';
-                    dot.style.opacity = config.baseOpacity;
-                }
-            });
+                lastMouseX = x;
+                lastMouseY = y;
+            }
+
+            rafId = requestAnimationFrame(animateDots);
         };
 
-        // Mouse move handler
+        // Optimized mouse move handler
         const handleMouseMove = (e) => {
             const rect = purpleSection.getBoundingClientRect();
 
@@ -95,14 +123,15 @@ const Work = () => {
                     x: e.clientX,
                     y: e.clientY
                 };
-                requestAnimationFrame(animateDots);
             }
         };
 
-        window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('mousemove', handleMouseMove, { passive: true });
+        rafId = requestAnimationFrame(animateDots);
 
         return () => {
             window.removeEventListener('mousemove', handleMouseMove);
+            cancelAnimationFrame(rafId);
             dots.forEach(dot => dot.remove());
         };
     }, []);
@@ -215,7 +244,7 @@ const Work = () => {
         const mouseConstraint = MouseConstraint.create(engine, {
             mouse,
             constraint: {
-                stiffness: 0.2,
+                stiffness: 0.1,
                 render: { visible: false }
             }
         });
@@ -459,26 +488,31 @@ const Work = () => {
                         ref={containerRef}
                         className="absolute inset-0"
                         style={{
-                            mixBlendMode: 'overlay',
-                            zIndex: 1
+                            zIndex: 1,
+                            position: 'relative'  // Changed from mixBlendMode overlay
                         }}
                     />
 
-                    {/* Image overlay with transparency */}
+                    {/* Video overlay with transparency */}
                     <div className="absolute inset-0 flex items-center justify-center p-4 md:p-0" style={{ zIndex: 2 }}>
-                        <img
-                            src={home1}
-                            alt="Overlay"
-                            className="w-full md:w-3/4 h-auto md:h-3/4 object-contain"
+                        <video
+                            className="w-full md:w-5/5 h-auto md:h-5/5 object-cover rounded-2xl md:rounded-3xl"
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
                             style={{
                                 filter: 'drop-shadow(0 0 10px rgba(255,255,255,0.3))'
                             }}
-                        />
+                        >
+                            <source src={home1} type="video/mp4" />
+                            Your browser does not support the video tag.
+                        </video>
                     </div>
                 </div>
             </div>
 
-            {/* Matter.js canvas */}
+            {/* Matter.js canvas section */}
             <div className='container mx-auto my-8 md:my-28 flex flex-col md:flex-row items-center justify-center gap-8 md:gap-0 px-4 md:px-0'>
                 <div className='w-full md:w-1/2'>
                     <h1 className='text-white text-3xl md:text-7xl text-center md:text-start mb-8 md:mb-0'>
@@ -505,16 +539,21 @@ const Work = () => {
                         onMouseLeave={handleMouseLeave}
                     />
 
-                    {/* Image overlay */}
+                    {/* Video overlay */}
                     <div className="absolute inset-0 flex items-center justify-center p-4 md:p-0" style={{ zIndex: 2, pointerEvents: 'none' }}>
-                        <img
-                            src={home2}
-                            alt="Overlay"
-                            className="w-full md:w-3/4 h-auto md:h-3/4 object-contain rounded-2xl md:rounded-3xl"
+                        <video
+                            className="w-full md:w-5/5 h-auto md:h-5/5 object-cover rounded-2xl md:rounded-3xl"
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
                             style={{
                                 filter: 'drop-shadow(0 0 10px rgba(255,255,255,0.3))'
                             }}
-                        />
+                        >
+                            <source src={home2} type="video/mp4" />
+                            Your browser does not support the video tag.
+                        </video>
                     </div>
                 </div>
             </div>

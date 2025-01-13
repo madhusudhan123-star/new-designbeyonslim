@@ -6,45 +6,62 @@ const Trust = () => {
     const canvasRef = useRef(null);
     const engineRef = useRef(null);
     const wordsRef = useRef([]);
+    const containerRef = useRef(null);
     const requestRef = useRef(null);
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const [isMouseInCanvas, setIsMouseInCanvas] = useState(false);
+    const [isVisible, setIsVisible] = useState(false);
 
     const WORDS = trustWords;
-    const COLORS = [
-        'rgba(59, 130, 246, 0.9)',  // Blue
-        'rgba(99, 102, 241, 0.9)',  // Indigo
-        'rgba(139, 92, 246, 0.9)',  // Purple
-        'rgba(236, 72, 153, 0.9)',  // Pink
-        'rgba(14, 165, 233, 0.9)',  // Sky
-    ];
+    const COLORS = trustColors;
 
     useEffect(() => {
         const updateDimensions = () => {
-            setDimensions({
-                width: window.innerWidth,
-                height: window.innerWidth < 768 ? window.innerHeight * 0.4 : window.innerHeight * 0.7 // Reduced mobile height
-            });
+            if (containerRef.current) {
+                const rect = containerRef.current.getBoundingClientRect();
+                setDimensions({
+                    width: rect.width,
+                    height: window.innerWidth < 768 ? window.innerHeight * 0.6 : window.innerHeight * 0.7
+                });
+            }
         };
 
         updateDimensions();
         window.addEventListener('resize', updateDimensions);
 
-        return () => window.removeEventListener('resize', updateDimensions);
+        // Set up Intersection Observer
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting) {
+                    setIsVisible(true);
+                }
+            },
+            { threshold: 0.1 }
+        );
+
+        if (containerRef.current) {
+            observer.observe(containerRef.current);
+        }
+
+        return () => {
+            window.removeEventListener('resize', updateDimensions);
+            observer.disconnect();
+        };
     }, []);
 
     useEffect(() => {
-        if (!dimensions.width || !dimensions.height) return;
+        if (!dimensions.width || !dimensions.height || !isVisible) return;
 
-        engineRef.current = Engine.create();
+        engineRef.current = Engine.create({
+            gravity: { x: 0, y: 1 } // Increased gravity
+        });
+
         const engine = engineRef.current;
 
-        // Add padding to keep boxes away from edges
-        const wallThickness = 60;
-        const padding = 20;
+        const wallThickness = 30;
+        const padding = 10;
 
-        // Create boundaries with adjusted positions
         const walls = [
             // Bottom wall
             Bodies.rectangle(
@@ -62,66 +79,57 @@ const Trust = () => {
                 dimensions.height,
                 { isStatic: true }
             ),
-            // Right wall - Adjusted position to be fully within screen
+            // Right wall
             Bodies.rectangle(
                 dimensions.width - wallThickness / 2 - padding,
                 dimensions.height / 2,
                 wallThickness,
                 dimensions.height,
                 { isStatic: true }
-            ),
-            // Top wall
-            Bodies.rectangle(
-                dimensions.width / 2,
-                -wallThickness / 2 + padding,
-                dimensions.width - padding * 2,
-                wallThickness,
-                { isStatic: true }
             )
         ];
 
         World.add(engine.world, walls);
 
-        // Adjust starting positions to account for padding
+        // Initialize words above the viewport
         wordsRef.current = WORDS.map((word, index) => {
             const isMobile = window.innerWidth < 768;
-            const width = isMobile ? (word.length * 8 + 20) : (word.length * 20 + 80); // Smaller on mobile
-            const height = isMobile ? 40 : 100; // Smaller height on mobile
-            const columns = isMobile ? 3 : 3; // More columns on mobile for better layout
-            const rows = Math.ceil(WORDS.length / columns);
-            const row = Math.floor(index / columns);
-            const col = index % columns;
+            // Double the width and height calculations
+            const width = isMobile ? (word.length * 6 + 12) : (word.length * 12 + 30); // Doubled
+            const height = isMobile ? 24 : 48; // Doubled
 
-            // Calculate safe starting positions with padding
-            const safeX = padding + width / 2 + (col * ((dimensions.width - padding * 2 - width) / (columns - 1)));
-            const safeY = padding + height / 2 + (row * ((dimensions.height - padding * 2 - height) / (rows + 1)));
+            const columns = isMobile ? 5 : 8;
+            const spacing = {
+                horizontal: isMobile ? 5 : 10
+            };
+
+            const col = index % columns;
+            const row = Math.floor(index / columns);
+
+            const startX = (dimensions.width - (columns * (width + spacing.horizontal))) / 2;
+            const x = startX + (col * (width + spacing.horizontal)) + width / 2;
+            // Position words above the viewport initially
+            const y = -200 - (row * (height + spacing.horizontal));
 
             return {
                 word,
                 body: Bodies.rectangle(
-                    safeX,
-                    safeY,
+                    x,
+                    y,
                     width,
                     height,
                     {
-                        friction: 0.3,
-                        restitution: 0.6,
-                        density: isMobile ? 0.003 : 0.001, // Adjusted density for mobile
-                        plugin: {
-                            attractors: []
-                        }
+                        friction: 0.05,
+                        restitution: 0.3,
+                        density: 0.001,
                     }
                 ),
                 color: COLORS[Math.floor(Math.random() * COLORS.length)],
-                targetColor: '#ffffff',
-                isExploding: false,
-                explosionRadius: 0
             };
         });
 
         World.add(engine.world, wordsRef.current.map(w => w.body));
 
-        // Add mouse control
         const mouse = Mouse.create(canvasRef.current);
         const mouseConstraint = MouseConstraint.create(engine, {
             mouse,
@@ -133,26 +141,12 @@ const Trust = () => {
 
         World.add(engine.world, mouseConstraint);
 
-        // Add particle system
-        const particles = [];
-        const createParticle = (x, y, color) => {
-            return {
-                x,
-                y,
-                color: shiftColor(color, 30),  // Brighter particle color
-                velocity: { x: (Math.random() - 0.5) * 4, y: (Math.random() - 0.5) * 4 },
-                alpha: 1,
-                radius: Math.random() * 3 + 2  // Larger particles
-            };
-        };
-
-        // Animation loop
         const animate = () => {
             Engine.update(engine);
             const ctx = canvasRef.current.getContext('2d');
             ctx.clearRect(0, 0, dimensions.width, dimensions.height);
 
-            // Add cursor following behavior
+            // Mouse interaction
             if (isMouseInCanvas) {
                 wordsRef.current.forEach(wordObj => {
                     const { body } = wordObj;
@@ -160,9 +154,8 @@ const Trust = () => {
                     const dy = mousePos.y - body.position.y;
                     const distance = Math.sqrt(dx * dx + dy * dy);
 
-                    // Apply attraction force when mouse is nearby
-                    if (distance < 200) {
-                        const force = 0.000015;
+                    if (distance < 150) {
+                        const force = 0.00001 * (1 - distance / 150);
                         Body.applyForce(body, body.position, {
                             x: dx * force,
                             y: dy * force
@@ -171,9 +164,9 @@ const Trust = () => {
                 });
             }
 
-            // Draw words with enhanced styling
+            // Draw words
             wordsRef.current.forEach(wordObj => {
-                const { body, word, isExploding, explosionRadius } = wordObj;
+                const { body, word } = wordObj;
                 const { x, y } = body.position;
                 const angle = body.angle;
 
@@ -181,86 +174,23 @@ const Trust = () => {
                 ctx.translate(x, y);
                 ctx.rotate(angle);
 
-                // Draw explosion effect
-                if (isExploding) {
-                    ctx.beginPath();
-                    ctx.strokeStyle = `rgba(255, 255, 0, ${1 - explosionRadius / 100})`;
-                    ctx.arc(0, 0, explosionRadius * 2, 0, Math.PI * 2);
-                    ctx.stroke();
-                    wordObj.explosionRadius += 5;
-                    if (wordObj.explosionRadius > 100) {
-                        wordObj.isExploding = false;
-                        wordObj.explosionRadius = 0;
-                    }
-                }
-
-                // Adjusted sizes for mobile
                 const isMobile = window.innerWidth < 768;
-                const fontSize = isMobile ? '16px' : '40px'; // Smaller font on mobile
-                const width = isMobile ? (word.length * 8 + 20) : (word.length * 20 + 80);
-                const height = isMobile ? 40 : 100;
-                const borderRadius = isMobile ? 8 : 20;
+                const fontSize = isMobile ? '12px' : '24px'; // Doubled font size
+                const width = isMobile ? (word.length * 6 + 12) : (word.length * 12 + 30); // Doubled
+                const height = isMobile ? 24 : 48; // Doubled
+                const borderRadius = isMobile ? 6 : 12; // Doubled border radius
 
-                // Create gradient
-                const gradient = ctx.createLinearGradient(-width/2, -height/2, width/2, height/2);
-                gradient.addColorStop(0, wordObj.color);
-                gradient.addColorStop(1, shiftColor(wordObj.color, 20));
-
-                // Enhanced box shadow
-                ctx.shadowColor = wordObj.color;
-                ctx.shadowBlur = 20;
-                ctx.shadowOffsetX = 0;
-                ctx.shadowOffsetY = 2;
-
-                // Draw box with gradient
-                ctx.fillStyle = gradient;
+                ctx.fillStyle = wordObj.color;
                 ctx.beginPath();
                 ctx.roundRect(-width / 2, -height / 2, width, height, borderRadius);
                 ctx.fill();
 
-                // Add subtle border
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-                ctx.lineWidth = 1;
-                ctx.stroke();
-
-                // Enhanced text styling
                 ctx.fillStyle = '#ffffff';
-                ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
-                ctx.shadowBlur = 4;
-                ctx.font = `bold ${fontSize} 'Inter', Arial`;
+                ctx.font = `${fontSize} 'Inter', Arial`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillText(word.toUpperCase(), 0, 0);
+                ctx.fillText(word.toLowerCase(), 0, 0);
 
-                ctx.restore();
-
-                // Add particles on movement
-                if (Math.abs(wordObj.body.velocity.x) > 0.5 || Math.abs(wordObj.body.velocity.y) > 0.5) {
-                    particles.push(createParticle(
-                        wordObj.body.position.x,
-                        wordObj.body.position.y,
-                        wordObj.color
-                    ));
-                }
-            });
-
-            // Draw particles
-            particles.forEach((particle, index) => {
-                particle.x += particle.velocity.x;
-                particle.y += particle.velocity.y;
-                particle.alpha -= 0.02;
-
-                if (particle.alpha <= 0) {
-                    particles.splice(index, 1);
-                    return;
-                }
-
-                ctx.save();
-                ctx.globalAlpha = particle.alpha;
-                ctx.fillStyle = particle.color;
-                ctx.beginPath();
-                ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
-                ctx.fill();
                 ctx.restore();
             });
 
@@ -269,7 +199,6 @@ const Trust = () => {
 
         requestRef.current = requestAnimationFrame(animate);
 
-        // Cleanup
         return () => {
             if (requestRef.current) {
                 cancelAnimationFrame(requestRef.current);
@@ -277,19 +206,9 @@ const Trust = () => {
             World.clear(engine.world);
             Engine.clear(engine);
         };
-    }, [dimensions]);
+    }, [dimensions, isVisible]);
 
-    // Add this helper function for color manipulation
-    const shiftColor = (rgba, amt) => {
-        const rgbaMatch = rgba.match(/[\d.]+/g);
-        if (rgbaMatch) {
-            const [r, g, b, a] = rgbaMatch.map(Number);
-            return `rgba(${Math.min(255, r + amt)}, ${Math.min(255, g + amt)}, ${Math.min(255, b + amt)}, ${a})`;
-        }
-        return rgba;
-    };
-
-    // Modify the scroll effect to add bounce without changing initial positions
+    // Add this new useEffect after the main animation useEffect
     useEffect(() => {
         let lastScrollY = window.scrollY;
         const handleScroll = () => {
@@ -297,92 +216,49 @@ const Trust = () => {
             const scrollDelta = currentScrollY - lastScrollY;
             lastScrollY = currentScrollY;
 
-            wordsRef.current.forEach(wordObj => {
-                // Add a gentle bouncing force based on scroll
-                Body.applyForce(
-                    wordObj.body,
-                    { x: wordObj.body.position.x, y: wordObj.body.position.y },
-                    {
-                        x: (Math.random() - 0.5) * 0.0002 * scrollDelta, // Add slight horizontal wobble
-                        y: -0.0004 * scrollDelta // Vertical bounce force
-                    }
-                );
+            if (wordsRef.current) {
+                wordsRef.current.forEach(wordObj => {
+                    if (wordObj.body) {
+                        // Add vertical bounce force
+                        const bounceForce = -0.0008 * scrollDelta;
+                        // Add random horizontal movement
+                        const randomHorizontal = (Math.random() - 0.5) * 0.0004 * scrollDelta;
 
-                // Add some rotation for more dynamic effect
-                Body.setAngularVelocity(
-                    wordObj.body,
-                    (Math.random() - 0.5) * 0.002 * scrollDelta
-                );
-            });
+                        Body.applyForce(
+                            wordObj.body,
+                            { x: wordObj.body.position.x, y: wordObj.body.position.y },
+                            {
+                                x: randomHorizontal,
+                                y: bounceForce
+                            }
+                        );
+
+                        // Add some rotation for more dynamic movement
+                        const spin = (Math.random() - 0.5) * 0.002 * scrollDelta;
+                        Body.setAngularVelocity(wordObj.body, wordObj.body.angularVelocity + spin);
+
+                        // Add damping to prevent excessive movement
+                        Body.setVelocity(wordObj.body, {
+                            x: wordObj.body.velocity.x * 0.95,
+                            y: wordObj.body.velocity.y * 0.95
+                        });
+                    }
+                });
+            }
         };
 
         window.addEventListener('scroll', handleScroll);
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
+        return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const handleDoubleClick = (e) => {
-        const clickX = e.clientX;
-        const clickY = e.clientY;
-
-        let closestWord = null;
-        let closestDist = Infinity;
-
-        wordsRef.current.forEach(wordObj => {
-            const dx = wordObj.body.position.x - clickX;
-            const dy = wordObj.body.position.y - clickY;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-
-            if (dist < closestDist) {
-                closestDist = dist;
-                closestWord = wordObj;
-            }
-        });
-
-        if (closestWord && closestDist < 100) {
-            closestWord.isExploding = true;
-            closestWord.explosionRadius = 0;
-            Body.setVelocity(closestWord.body, {
-                x: (Math.random() - 0.5) * 20,
-                y: -Math.random() * 15
-            });
-            Body.setAngularVelocity(closestWord.body, (Math.random() - 0.5) * 0.4);
-        }
-    };
-
-    const handleClick = (e) => {
-        if (!engineRef.current) return;
-
-        const word = WORDS[Math.floor(Math.random() * WORDS.length)];
-        const width = word.length * 10 + 80;
-        const height = 100;
-
-        const newWord = {
-            word,
-            body: Bodies.rectangle(
-                e.clientX,
-                e.clientY,
-                width,
-                height,
-                {
-                    friction: 0.3,
-                    restitution: 0.6,
-                    density: 0.001
-                }
-            ),
-            color: COLORS[Math.floor(Math.random() * COLORS.length)],
-            targetColor: '#ffffff',
-            isExploding: false,
-            explosionRadius: 0
-        };
-
-        wordsRef.current.push(newWord);
-        World.add(engineRef.current.world, newWord.body);
-    };
-
     const handleMouseMove = (e) => {
-        setMousePos({ x: e.clientX, y: e.clientY });
+        if (canvasRef.current) {
+            const rect = canvasRef.current.getBoundingClientRect();
+            setMousePos({
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            });
+        }
     };
 
     const handleMouseEnter = () => {
@@ -394,9 +270,9 @@ const Trust = () => {
     };
 
     return (
-        <div className="relative w-screen h-[60vh] md:h-[100vh] bg-white"> {/* Adjusted mobile height */}
-            <div className='w-screen h-[40vh] md:h-[90vh] flex justify-center items-start text-center cursor'>
-                <h1 style={{ userSelect: 'none' }} className=' text-4xl md:text-7xl font-[600] w-full md:w-2/3 px-4 md:px-0 relative z-10 pt-4 md:pt-8'>
+        <div ref={containerRef} className="relative w-full h-[50vh] md:h-[80vh] bg-white overflow-hidden">
+            <div className='w-full h-[30vh] md:h-[40vh] flex justify-center items-start text-center'>
+                <h1 style={{ userSelect: 'none' }} className='text-3xl md:text-7xl font-[600] w-full md:w-2/3 px-4 md:px-0 relative z-10 pt-3 md:pt-6'>
                     {truse.title}
                 </h1>
             </div>
@@ -404,12 +280,10 @@ const Trust = () => {
                 ref={canvasRef}
                 width={dimensions.width}
                 height={dimensions.height}
-                onClick={handleClick}
-                onDoubleClick={handleDoubleClick}
                 onMouseMove={handleMouseMove}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
-                className="absolute top-0 left-0 w-[100vw] mx-auto h-[50vh] md:h-[90vh]" // Adjusted mobile height
+                className="absolute top-0 left-0 font-raleway font-normal w-full h-[60vh] md:h-[80vh]"
             />
         </div>
     );

@@ -351,13 +351,24 @@ export const header = {
 };
 
 export const trustWords = [
-    "EFFECTIVE",
-    "NATURAL",
-    "PROVEN",
-    "SAFE",
-    "TRUSTED",
-    "RELIABLE",
-    "LIFE-CHANGING",
+    "effective",
+    "natural",
+    "proven",
+    "safe",
+    "trusted",
+    "reliable",
+    "life-changing",
+    "powerful",
+    "secure",
+    "resilient",
+    "efficient",
+    "practical",
+    "consistent",
+    "sustainable",
+    "beneficial",
+    "truthful",
+    "user-friendly",
+    "valuable",
 ];
 
 export const truse = {
@@ -365,20 +376,19 @@ export const truse = {
 };
 
 export const trustColors = [
-    '#FF5733', // vibrant orange-red
-    '#28B463', // emerald green
-    '#3498DB', // deep sky blue
-    '#F1C40F', // sunflower yellow
-    '#E74C3C', // bold red
-    '#8E44AD', // rich purple
-    '#2ECC71'  // bright green
+    'rgba(255, 215, 0, 0.9)',   // Gold
+    'rgba(153, 50, 204, 0.9)',  // Purple
+    'rgba(50, 205, 50, 0.9)',   // Lime
+    'rgba(0, 191, 255, 0.9)',   // Deep Sky Blue
+    'rgba(255, 69, 0, 0.9)',    // Orange Red
+    'rgba(127, 255, 0, 0.9)'    // Chartreuse
 ];
 
 export const second = {
     slide1: 'Transform Yourself Naturally',
-    slide2: 'Guaranteed Results You Can See',
-    slide3: 'Supports Over 10 Languages',
-    slide4: 'Unleash Your Best Self'
+    slide2: 'You Can See Guaranteed Results',
+    slide3: 'Ayurvedic herbs, specifically improve the body’s ability to burn thigh & belly fat.',
+    slide4: 'Controls your appetite by helping avoid junk cravings.'
 };
 
 export const review = [

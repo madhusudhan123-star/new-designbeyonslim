@@ -73,9 +73,10 @@ const Home = () => {
                     <p className='text-xl md:text-3xl font-medium text-center w-full  md:w-1/2 mt-10 md:mt-20'>
                         {header.sub}
                     </p>
-                    <button
-                        className='
-                            text-5xl md:text-5xl 
+                    <a href='/product'>
+                        <button
+                            className='
+                        text-5xl md:text-5xl 
                             font-bold text-center 
                             p-8 rounded-full 
                             bg-blue-600 hover:bg-blue-700 
@@ -101,9 +102,10 @@ const Home = () => {
                             hover:shadow-2xl
                             hover:shadow-blue-500/50
                         '
-                    >
-                        {header.button}
-                    </button>
+                        >
+                            {header.button}
+                        </button>
+                    </a>
                 </div>
             </section>
 

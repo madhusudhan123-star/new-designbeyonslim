@@ -1,15 +1,25 @@
 import React, { useState } from 'react';
 import { RiMenu3Line, RiCloseLine } from 'react-icons/ri';
+import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from 'react-icons/fa';
 import logo from '../assets/logo.png';
 import { navigationLinks } from '../utility/data';
 
 const NavbarComponent = () => {
     const [isOpen, setIsOpen] = useState(false);
 
+    const socialIcons = [
+        { icon: <FaFacebookF />, link: 'https://facebook.com' },
+        { icon: <FaTwitter />, link: 'https://twitter.com' },
+        { icon: <FaInstagram />, link: 'https://instagram.com' },
+        { icon: <FaLinkedinIn />, link: 'https://linkedin.com' }
+    ];
+
     return (
         <nav className="w-full fixed z-50">
-            <div className="w-4/4 md:w-2/4 bg-blue-200 rounded-full mt-5 mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="w-4/4 md:w-4/5 bg-blue-200 rounded-full mt-5 mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
+
+                    {/* Logo */}
                     <div className="flex items-center">
                         <a href='/'>
                             <img src={logo} className='ml-2 w-28' />
@@ -25,6 +35,15 @@ const NavbarComponent = () => {
                                 className="text-blue-600 font- text-2xl hover:text-"
                             >
                                 {link.title}
+                            </a>
+                        ))}
+                    </div>
+
+                    {/* Right Social Icons */}
+                    <div className="hidden md:flex items-center space-x-4">
+                        {socialIcons.slice(0, 4).map((item, index) => (
+                            <a key={index} href={item.link} className="text-blue-600 hover:text-blue-800 text-xl">
+                                {item.icon}
                             </a>
                         ))}
                     </div>
