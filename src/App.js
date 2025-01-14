@@ -14,11 +14,15 @@ import Privacypolicy from "./pages/Privacypolicy"; // Changed from PrivacyPolicy
 import Contact from "./pages/Contact";
 import About from "./pages/About"; // Make sure this import is correct
 import FAQ from "./pages/FAQ";
-import { FaPhoneAlt } from 'react-icons/fa';
+import { FaPhoneAlt, FaWhatsapp } from 'react-icons/fa';
 
 function App() {
   const handleCall = () => {
     window.location.href = 'tel:+919908526444';
+  };
+
+  const handleWhatsApp = () => {
+    window.location.href = 'https://wa.me/+919908526444';
   };
 
   return (
@@ -41,17 +45,31 @@ function App() {
           </Routes>
           <Footer />
 
-          {/* Floating Call Button */}
+          {/* Mobile Fixed Bottom Bar */}
+          <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white shadow-lg z-50 
+                        flex justify-around items-center py-3 px-4 space-x-4">
+            <button
+              onClick={handleCall}
+              className="flex-1 bg-green-500 text-white py-2 px-4 rounded-full 
+                       flex items-center justify-center space-x-2 shadow-md
+                       active:scale-95 transition-transform"
+            >
+              <FaPhoneAlt className="text-lg" />
+              <span className="text-sm font-medium">Call Now</span>
+            </button>
+          </div>
+
+          {/* Desktop Floating Button */}
           <button
             onClick={handleCall}
             className="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 
                      text-white rounded-full p-4 shadow-lg transform hover:scale-110 
-                     transition-all duration-300 flex items-center justify-center
-                     animate-bounce hover:animate-none"
+                     transition-all duration-300 hidden md:flex items-center justify-center
+                     animate-bounce hover:animate-none group"
             aria-label="Call us"
           >
-            <FaPhoneAlt className="text-2xl" />
-            <span className="ml-2 hidden md:inline">Call Now</span>
+            <FaPhoneAlt className="text-2xl group-hover:animate-wiggle" />
+            
           </button>
         </Router>
       </div>
