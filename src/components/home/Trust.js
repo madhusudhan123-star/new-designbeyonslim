@@ -11,6 +11,8 @@ const Trust = () => {
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const [isMouseInCanvas, setIsMouseInCanvas] = useState(false);
+    const [isBouncing, setIsBouncing] = useState(false);
+    const bounceIntervalRef = useRef(null);
 
     const WORDS = trustWords;
     const COLORS = trustColors;
@@ -38,7 +40,7 @@ const Trust = () => {
         if (!dimensions.width || !dimensions.height) return;
 
         engineRef.current = Engine.create({
-            gravity: { x: 0, y: 2 } // Increased gravity for faster fall
+            gravity: { x: 0, y: 0.2 } // Reduced gravity for more floating effect
         });
 
         const engine = engineRef.current;
@@ -189,6 +191,72 @@ const Trust = () => {
             Engine.clear(engine);
         };
     }, [dimensions]);
+
+    useEffect(() => {
+        const applyBounceForce = () => {
+            if (!wordsRef.current) return;
+
+            wordsRef.current.forEach(wordObj => {
+                const randomForceX = (Math.random() - 0.5) * 0.006; // Increased horizontal force
+                const upwardForce = -Math.random() * 0.01; // Increased upward force
+                
+                Body.applyForce(
+                    wordObj.body,
+                    { x: wordObj.body.position.x, y: wordObj.body.position.y },
+                    { x: randomForceX, y: upwardForce }
+                );
+
+                // Increased rotation force
+                const rotationForce = (Math.random() - 0.5) * 0.04;
+                Body.setAngularVelocity(wordObj.body, rotationForce);
+
+                // Add random impulses for more dynamic movement
+                if (Math.random() > 0.7) {
+                    const impulseX = (Math.random() - 0.5) * 0.5;
+                    const impulseY = -Math.random() * 0.8;
+                    Body.setVelocity(wordObj.body, {
+                        x: wordObj.body.velocity.x + impulseX,
+                        y: wordObj.body.velocity.y + impulseY
+                    });
+                }
+            });
+        };
+
+        const handleScroll = () => {
+            if (!isBouncing) {
+                setIsBouncing(true);
+                
+                // Clear any existing interval
+                if (bounceIntervalRef.current) {
+                    clearInterval(bounceIntervalRef.current);
+                }
+
+                // Increased frequency of force application
+                bounceIntervalRef.current = setInterval(applyBounceForce, 50);
+
+                // Stop bouncing after scrolling ends
+                clearTimeout(window._scrollTimeout);
+                window._scrollTimeout = setTimeout(() => {
+                    if (bounceIntervalRef.current) {
+                        clearInterval(bounceIntervalRef.current);
+                    }
+                    setIsBouncing(false);
+                }, 300); // Increased duration of effect
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            if (bounceIntervalRef.current) {
+                clearInterval(bounceIntervalRef.current);
+            }
+            if (window._scrollTimeout) {
+                clearTimeout(window._scrollTimeout);
+            }
+        };
+    }, [isBouncing]);
 
     const handleMouseMove = (e) => {
         if (canvasRef.current) {
