@@ -52,11 +52,20 @@ const Product = () => {
 
         World.add(engine.world, walls);
 
-        // Create falling boxes
+        // Create falling boxes with new color scheme
         const createBox = () => {
-            const colors = productPage.animation.boxColors;
+            // New gradient colors array
+            const gradientColors = [
+                { start: '#FF6B6B', end: '#FF8E8E' }, // Coral
+                { start: '#4ECDC4', end: '#45B7D1' }, // Turquoise
+                { start: '#96CEB4', end: '#FFEEAD' }, // Sage
+                { start: '#D4A5A5', end: '#E8C3C3' }, // Rose
+                { start: '#9A8194', end: '#B6A0AE' }  // Mauve
+            ];
+            
             const size = Math.random() * 40 + 20;
             const x = Math.random() * dimensions.width;
+            const colorPair = gradientColors[Math.floor(Math.random() * gradientColors.length)];
 
             return {
                 body: Bodies.rectangle(x, -50, size, size, {
@@ -64,48 +73,69 @@ const Product = () => {
                     restitution: 0.6,
                     density: 0.001
                 }),
-                color: colors[Math.floor(Math.random() * colors.length)],
+                colorStart: colorPair.start,
+                colorEnd: colorPair.end,
                 angle: Math.random() * Math.PI
             };
         };
 
-        // Animation loop
+        // Modified animation loop with new gradient rendering
         const animate = () => {
             Engine.update(engine);
             const ctx = canvasRef.current.getContext('2d');
             ctx.clearRect(0, 0, dimensions.width, dimensions.height);
 
-            // Add new boxes periodically
             if (boxesRef.current.length < 50 && Math.random() > 0.95) {
                 const newBox = createBox();
                 boxesRef.current.push(newBox);
                 World.add(engine.world, newBox.body);
             }
 
-            // Draw boxes with enhanced styling
+            // Enhanced box rendering with new gradients
             boxesRef.current.forEach((box, index) => {
-                const { body, color } = box;
+                const { body, colorStart, colorEnd } = box;
                 ctx.save();
                 ctx.translate(body.position.x, body.position.y);
                 ctx.rotate(body.angle);
 
-                // Create gradient
-                const gradient = ctx.createLinearGradient(-body.bounds.max.x / 2, -body.bounds.max.y / 2,
-                    body.bounds.max.x / 2, body.bounds.max.y / 2);
-                gradient.addColorStop(0, color);
-                gradient.addColorStop(1, shiftColor(color, 30));
+                // Create enhanced gradient
+                const gradient = ctx.createLinearGradient(
+                    -body.bounds.max.x / 2,
+                    -body.bounds.max.y / 2,
+                    body.bounds.max.x / 2,
+                    body.bounds.max.y / 2
+                );
+                gradient.addColorStop(0, colorStart);
+                gradient.addColorStop(1, colorEnd);
 
-                // Draw box with shadow and gradient
-                ctx.shadowColor = color;
-                ctx.shadowBlur = 15;
+                // Add glow effect
+                ctx.shadowColor = colorStart;
+                ctx.shadowBlur = 20;
                 ctx.fillStyle = gradient;
                 ctx.beginPath();
-                ctx.roundRect(-body.bounds.max.x / 2, -body.bounds.max.y / 2,
-                    body.bounds.max.x, body.bounds.max.y, 5);
+                ctx.roundRect(
+                    -body.bounds.max.x / 2,
+                    -body.bounds.max.y / 2,
+                    body.bounds.max.x,
+                    body.bounds.max.y,
+                    8 // Increased border radius
+                );
                 ctx.fill();
+
+                // Add subtle highlight
+                ctx.beginPath();
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+                ctx.roundRect(
+                    -body.bounds.max.x / 4,
+                    -body.bounds.max.y / 4,
+                    body.bounds.max.x / 2,
+                    body.bounds.max.y / 2,
+                    4
+                );
+                ctx.fill();
+                
                 ctx.restore();
 
-                // Remove boxes that have fallen below the screen
                 if (body.position.y > dimensions.height + 100) {
                     World.remove(engine.world, body);
                     boxesRef.current.splice(index, 1);
@@ -187,8 +217,7 @@ const Product = () => {
                     <div className="relative z-20 mb-8">
                         <div
                             ref={imageRef}
-                            className="w-[300px] h-[300px] sm:w-[400px] sm:h-[400px] md:w-[500px] md:h-[500px] 
-                                     rounded-full overflow-hidden shadow-2xl relative"
+                            className="w-[300px] h-[300px] sm:w-[400px] sm:h-[400px] md:w-[500px] md:h-[500px] relative"
                         >
                             <img
                                 src={product}
@@ -236,31 +265,7 @@ const Product = () => {
                 </div>
             </section>
 
-            {/* Product Details Section */}
-            <section className="relative bg-blue-600 min-h-screen z-10 px-4 py-20">
-                <div className="max-w-6xl mx-auto">
-                    <h2 className="text-4xl md:text-6xl text-white font-bold mb-12 text-center">
-                        {productPage.features.title}
-                    </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {productPage.features.items.map((feature, index) => (
-                            <div
-                                key={index}
-                                className="bg-white/10 backdrop-blur-sm rounded-2xl p-8
-                                         hover:bg-white/20 transition-all duration-300
-                                         transform hover:scale-105"
-                            >
-                                <h3 className="text-2xl md:text-3xl text-white font-bold mb-4">
-                                    {feature.title}
-                                </h3>
-                                <p className="text-white/90">
-                                    {feature.description}
-                                </p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
+
         </div>
     );
 };

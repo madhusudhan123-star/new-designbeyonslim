@@ -1,62 +1,80 @@
 import React from 'react';
 import { footerData } from '../utility/data';
+import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn, FaWhatsapp } from 'react-icons/fa';
 import logo from '../assets/logo.png';
 
 const Footer = () => {
+    const socialIcons = [
+        { icon: <FaFacebookF />, link: 'https://facebook.com', label: 'Facebook' },
+        { icon: <FaTwitter />, link: 'https://twitter.com', label: 'Twitter' },
+        { icon: <FaInstagram />, link: 'https://instagram.com', label: 'Instagram' },
+        { icon: <FaLinkedinIn />, link: 'https://linkedin.com', label: 'LinkedIn' },
+        { icon: <FaWhatsapp />, link: 'https://wa.me/+919908526444', label: 'WhatsApp' }
+    ];
+
     return (
         <footer className="relative z-40 bg-gradient-to-r from-gray-900 to-gray-700 text-gray-100">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                {/* Logo and Description Section */}
-                <div className="flex flex-col items-center mb-16">
-                    <img
-                        src={logo}
-                        alt="Beyond Logo"
-                        className="h-16 w-auto mb-6 hover:opacity-90 transition-opacity"
-                    />
-                    <p className="text-gray-300 text-lg text-center max-w-lg">
-                        Generate unlimited AI videos with your own face, voice & gestures
-                    </p>
-                </div>
-
-                {/* Links Grid Section */}
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-y-12 gap-x-8 max-w-6xl mx-auto mb-16">
-                    {footerData.columns.map((column, index) => (
-                        <div key={index} className="flex flex-col items-center md:items-start">
-                            <h3 className="text-xl font-semibold mb-6 text-blue-400 relative">
-                                {column.title}
-                                <span className="absolute -bottom-2 left-1/2 md:left-0 w-12 h-0.5 bg-blue-400 transform -translate-x-1/2 md:translate-x-0"></span>
-                            </h3>
-                            <ul className="space-y-4 text-center md:text-left">
-                                {column.links.map((link, linkIndex) => (
-                                    <li key={linkIndex}>
-                                        <a
-                                            href={link.href}
-                                            className="text-gray-300 hover:text-yellow-300 transition-all duration-300 inline-block
-                                                     transform hover:translate-x-2"
-                                        >
-                                            {link.text}
-                                        </a>
-                                    </li>
-                                ))}
-                            </ul>
+                <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+                    {/* Logo and Social Icons Section */}
+                    <div className="flex flex-col items-center md:items-start gap-6">
+                        <img
+                            src={logo}
+                            alt="Beyond Logo"
+                            className="h-16 w-auto hover:opacity-90 transition-opacity"
+                        />
+                        {/* Social Icons */}
+                        <div className="flex items-center gap-4">
+                            {socialIcons.map((item, index) => (
+                                <a
+                                    key={index}
+                                    href={item.link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label={item.label}
+                                    className="text-gray-300 hover:text-blue-400 transition-all duration-300 
+                                             p-2 rounded-full hover:bg-white/10 text-xl"
+                                >
+                                    {item.icon}
+                                </a>
+                            ))}
                         </div>
-                    ))}
+                    </div>
+
+                    {/* Links Grid Section */}
+                    <div className="flex gap-12 md:gap-24">
+                        {footerData.columns.map((column, index) => (
+                            <div key={index} className="flex flex-col">
+                                <h3 className="text-xl font-semibold mb-6 text-blue-400 relative">
+                                    {column.title}
+                                    <span className="absolute -bottom-2 left-0 w-12 h-0.5 bg-blue-400"></span>
+                                </h3>
+                                <ul className="space-y-4">
+                                    {column.links.map((link, linkIndex) => (
+                                        <li key={linkIndex}>
+                                            <a
+                                                href={link.href}
+                                                className="text-gray-300 hover:text-yellow-300 transition-all duration-300 inline-block transform hover:translate-x-2"
+                                            >
+                                                {link.text}
+                                            </a>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
+                    </div>
                 </div>
 
-                {/* Copyright Section */}
-                <div className="border-t border-gray-800 pt-8">
-                    <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                        <p className="text-gray-400 text-sm text-center md:text-left">
+                {/* Copyright and Social Text */}
+                <div className="border-t border-gray-800 mt-12 pt-8">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                        <p className="text-gray-400 text-sm">
                             © {new Date().getFullYear()} Beyond. All rights reserved.
                         </p>
-                        <div className="flex items-center space-x-6">
-                            <a href="/privacy-policy" className="text-gray-400 hover:text-yellow-300 text-sm transition-colors">
-                                Privacy Policy
-                            </a>
-                            <a href="/terms" className="text-gray-400 hover:text-yellow-300 text-sm transition-colors">
-                                Terms of Service
-                            </a>
-                        </div>
+                        <p className="text-gray-400 text-sm">
+                            Connect with us on social media
+                        </p>
                     </div>
                 </div>
             </div>

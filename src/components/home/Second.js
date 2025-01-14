@@ -1,15 +1,44 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { second } from '../../utility/data';
 
 gsap.registerPlugin(ScrollTrigger);
 
+// Add this custom hook at the top of the file, before the Second component
+const useDynamicFontSize = () => {
+    const [fontSize, setFontSize] = useState('6vw');
+
+    useEffect(() => {
+        const calculateFontSize = () => {
+            const width = window.innerWidth;
+            if (width < 640) { // mobile
+                setFontSize('8vw');
+            } else if (width < 768) { // small tablets
+                setFontSize('7vw');
+            } else if (width < 1024) { // tablets/small laptops
+                setFontSize('6vw');
+            } else if (width < 1280) { // laptops/desktops
+                setFontSize('5vw');
+            } else { // large screens
+                setFontSize('4vw');
+            }
+        };
+
+        calculateFontSize();
+        window.addEventListener('resize', calculateFontSize);
+        return () => window.removeEventListener('resize', calculateFontSize);
+    }, []);
+
+    return fontSize;
+};
+
 const Second = () => {
     const sectionRef = useRef(null);
     const videoRef = useRef(null);
     const circleRef = useRef(null);
     const horizontalRef = useRef(null);
+    const fontSize = useDynamicFontSize();
 
     useEffect(() => {
         const section = sectionRef.current;
@@ -157,22 +186,22 @@ const Second = () => {
                         <div className="slide w-screen h-[70vh] md:h-[80vh] bg-[#3B82F6] rounded-2xl md:rounded-3xl 
                             flex items-center justify-center p-4 md:p-8 transition-all duration-300
                             ">
-                            <h2 className="text-6xl sm:text-6xl md:text-8xl lg:text-9xl text-center text-white font-bold">{second.slide1}</h2>
+                            <h2 className="text-center text-white font-bold" style={{ fontSize }}>{second.slide1}</h2>
                         </div>
                         <div className="slide w-screen h-[70vh] md:h-[80vh] bg-[#3B82F6] rounded-2xl md:rounded-3xl 
                             flex items-center justify-center p-4 md:p-8 transition-all duration-300
                             ">
-                            <h2 className="text-6xl sm:text-6xl md:text-8xl lg:text-9xl text-center text-white font-bold">{second.slide2}</h2>
+                            <h2 className="text-center text-white font-bold" style={{ fontSize }}>{second.slide2}</h2>
                         </div>
                         <div className="slide w-screen h-[70vh] md:h-[80vh] bg-[#3B82F6] rounded-2xl md:rounded-3xl 
                             flex items-center justify-center p-4 md:p-8 transition-all duration-300
                             ">
-                            <h2 className="text-6xl sm:text-6xl md:text-8xl lg:text-9xl text-center text-white font-bold">{second.slide3}</h2>
+                            <h2 className="text-center text-white font-bold" style={{ fontSize }}>{second.slide3}</h2>
                         </div>
                         <div className="slide w-screen h-[70vh] md:h-[80vh] bg-[#3B82F6] rounded-2xl md:rounded-3xl 
                             flex items-center justify-center p-4 md:p-8 transition-all duration-300
                             ">
-                            <h2 className="text-6xl sm:text-6xl md:text-8xl lg:text-9xl text-center text-white font-bold">{second.slide4}</h2>
+                            <h2 className="text-center text-white font-bold" style={{ fontSize }}>{second.slide4}</h2>
                         </div>
                     </div>
                 </div>

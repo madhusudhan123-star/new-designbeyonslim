@@ -12,6 +12,7 @@ const Trust = () => {
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const [isMouseInCanvas, setIsMouseInCanvas] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
+    const [hasInitialFall, setHasInitialFall] = useState(false);
 
     const WORDS = trustWords;
     const COLORS = trustColors;
@@ -54,7 +55,7 @@ const Trust = () => {
         if (!dimensions.width || !dimensions.height || !isVisible) return;
 
         engineRef.current = Engine.create({
-            gravity: { x: 0, y: 1 } // Increased gravity
+            gravity: { x: 0, y: 2 } // Increased gravity for faster fall
         });
 
         const engine = engineRef.current;
@@ -91,12 +92,11 @@ const Trust = () => {
 
         World.add(engine.world, walls);
 
-        // Initialize words above the viewport
+        // Initialize words closer to viewport
         wordsRef.current = WORDS.map((word, index) => {
             const isMobile = window.innerWidth < 768;
-            // Double the width and height calculations
-            const width = isMobile ? (word.length * 6 + 12) : (word.length * 12 + 30); // Doubled
-            const height = isMobile ? 24 : 48; // Doubled
+            const width = isMobile ? (word.length * 6 + 12) : (word.length * 12 + 30);
+            const height = isMobile ? 24 : 48;
 
             const columns = isMobile ? 5 : 8;
             const spacing = {
@@ -108,8 +108,8 @@ const Trust = () => {
 
             const startX = (dimensions.width - (columns * (width + spacing.horizontal))) / 2;
             const x = startX + (col * (width + spacing.horizontal)) + width / 2;
-            // Position words above the viewport initially
-            const y = -200 - (row * (height + spacing.horizontal));
+            // Position words just above the viewport
+            const y = -50 - (row * (height + spacing.horizontal));
 
             return {
                 word,
@@ -121,7 +121,7 @@ const Trust = () => {
                     {
                         friction: 0.05,
                         restitution: 0.3,
-                        density: 0.001,
+                        density: 0.002, // Increased density for better physics
                     }
                 ),
                 color: COLORS[Math.floor(Math.random() * COLORS.length)],
@@ -199,6 +199,21 @@ const Trust = () => {
 
         requestRef.current = requestAnimationFrame(animate);
 
+        // Apply immediate force when section becomes visible
+        if (isVisible && !hasInitialFall) {
+            wordsRef.current.forEach(wordObj => {
+                if (wordObj.body) {
+                    Body.setVelocity(wordObj.body, { x: 0, y: 10 }); // Add initial velocity
+                    Body.applyForce(
+                        wordObj.body,
+                        { x: wordObj.body.position.x, y: wordObj.body.position.y },
+                        { x: 0, y: 0.5 } // Increased initial force
+                    );
+                }
+            });
+            setHasInitialFall(true);
+        }
+
         return () => {
             if (requestRef.current) {
                 cancelAnimationFrame(requestRef.current);
@@ -208,7 +223,7 @@ const Trust = () => {
         };
     }, [dimensions, isVisible]);
 
-    // Add this new useEffect after the main animation useEffect
+    // Replace the scroll handling useEffect with this updated version
     useEffect(() => {
         let lastScrollY = window.scrollY;
         const handleScroll = () => {
@@ -217,39 +232,52 @@ const Trust = () => {
             lastScrollY = currentScrollY;
 
             if (wordsRef.current) {
-                wordsRef.current.forEach(wordObj => {
-                    if (wordObj.body) {
-                        // Add vertical bounce force
-                        const bounceForce = -0.0008 * scrollDelta;
-                        // Add random horizontal movement
-                        const randomHorizontal = (Math.random() - 0.5) * 0.0004 * scrollDelta;
+                // Initial fall animation
+                if (!hasInitialFall) {
+                    wordsRef.current.forEach(wordObj => {
+                        if (wordObj.body) {
+                            // Apply a strong initial downward force
+                            Body.applyForce(
+                                wordObj.body,
+                                { x: wordObj.body.position.x, y: wordObj.body.position.y },
+                                { x: 0, y: 0.1 }
+                            );
+                        }
+                    });
+                    setHasInitialFall(true);
+                } else {
+                    // Regular scroll animations
+                    wordsRef.current.forEach(wordObj => {
+                        if (wordObj.body) {
+                            // Existing scroll animation logic
+                            const bounceForce = -0.0008 * scrollDelta;
+                            const randomHorizontal = (Math.random() - 0.5) * 0.0004 * scrollDelta;
 
-                        Body.applyForce(
-                            wordObj.body,
-                            { x: wordObj.body.position.x, y: wordObj.body.position.y },
-                            {
-                                x: randomHorizontal,
-                                y: bounceForce
-                            }
-                        );
+                            Body.applyForce(
+                                wordObj.body,
+                                { x: wordObj.body.position.x, y: wordObj.body.position.y },
+                                {
+                                    x: randomHorizontal,
+                                    y: bounceForce
+                                }
+                            );
 
-                        // Add some rotation for more dynamic movement
-                        const spin = (Math.random() - 0.5) * 0.002 * scrollDelta;
-                        Body.setAngularVelocity(wordObj.body, wordObj.body.angularVelocity + spin);
+                            const spin = (Math.random() - 0.5) * 0.002 * scrollDelta;
+                            Body.setAngularVelocity(wordObj.body, wordObj.body.angularVelocity + spin);
 
-                        // Add damping to prevent excessive movement
-                        Body.setVelocity(wordObj.body, {
-                            x: wordObj.body.velocity.x * 0.95,
-                            y: wordObj.body.velocity.y * 0.95
-                        });
-                    }
-                });
+                            Body.setVelocity(wordObj.body, {
+                                x: wordObj.body.velocity.x * 0.95,
+                                y: wordObj.body.velocity.y * 0.95
+                            });
+                        }
+                    });
+                }
             }
         };
 
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+    }, [hasInitialFall]);
 
     const handleMouseMove = (e) => {
         if (canvasRef.current) {

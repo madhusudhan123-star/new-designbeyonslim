@@ -4,13 +4,17 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Trust from '../components/home/Trust';
 import Navbar from '../components/Navbar';
-import { header } from '../utility/data';
+import { header, why } from '../utility/data';
 import { TypeAnimation } from 'react-type-animation';
 import Second from '../components/home/Second';
 import Review from '../components/home/Review';
 import Work from '../components/home/Work';
 import FAQ from '../components/home/FAQ';
-import Footer from '../components/Footer';
+import why1 from '../assets/why1.jpeg';
+import why2 from '../assets/why2.png';
+import why3 from '../assets/why3.png';
+import why4 from '../assets/why4.png';
+
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -126,10 +130,39 @@ const Home = () => {
             <div className='relative'>
                 <Work />
             </div>
+            {/* Wy we have to use*/}
+            <div>
+                <div className='my-10'>
+                    <h1 className='text-6xl text-center font-bold'>{why.maintitle}</h1>
+                    <div className=' flex items-center justify-center mt-28 gap-10'>
+                        <div className='flex flex-col items-center justify-center gap-5'>
+                            <img src={why1} className='w-20' />
+                            <h2 className='font-bold text-lg text-[#00BBFF]'>{why.title4}</h2>
+                            <p className='w-2/3 text-center'>{why.para4}</p>
+                        </div>
+                        <div className='flex flex-col items-center justify-center gap-5'>
+                            <img src={why2} className='w-20' />
+                            <h2 className='font-bold text-lg text-[#00BBFF] '>{why.title3}</h2>
+                            <p className='w-2/3 text-center'>{why.para3}</p>
+                        </div>
+                        <div className='flex flex-col items-center justify-center gap-5'>
+                            <img src={why3} className='w-20' />
+                            <h2 className='font-bold text-lg text-[#00BBFF]'>{why.title1}</h2>
+                            <p className='w-2/3 text-center'>{why.para1}</p>
+                        </div>
+                        <div className='flex flex-col items-center justify-center gap-5'>
+                            <img src={why4} className='w-20' />
+                            <h2 className='font-bold text-lg text-[#00BBFF]'>{why.title2}</h2>
+                            <p className='w-2/3 text-center'>{why.para2}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
             {/* FAQ Section */}
             <div className='relative'>
                 <FAQ />
             </div>
+
         </main>
     );
 };
