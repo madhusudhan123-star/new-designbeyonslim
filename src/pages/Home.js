@@ -23,36 +23,57 @@ const Home = () => {
     const lenisRef = useRef(null);
 
     useEffect(() => {
+        // Prevent default scrolling behavior
+        document.documentElement.style.scrollBehavior = 'auto';
+        
         // Initialize Lenis with optimized settings
         const lenis = new Lenis({
-            duration: 1.5,
+            duration: 1.2,
             smoothWheel: true,
-            smoothTouch: true,
-            touchMultiplier: 0,
+            smoothTouch: false, // Disable smooth scrolling for touch devices
+            touchMultiplier: 2,
             infinite: false,
-            wheelMultiplier: 1.3,
-            lerp: 0.08,
-            syncTouch: true,
-            syncTouchLerp: 0.08
+            wheelMultiplier: 1,
+            lerp: 0.1,
+            orientation: 'vertical',
+            gestureOrientation: 'vertical',
+            normalizeWheel: true,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) // Smoother easing function
         });
 
         lenisRef.current = lenis;
 
-        // Sync Lenis with GSAP
-        lenis.on('scroll', () => {
-            ScrollTrigger.update();
+        // Sync Lenis with GSAP ScrollTrigger
+        lenis.on('scroll', ScrollTrigger.update);
+
+        gsap.ticker.add((time) => {
+            lenis.raf(time * 1000);
         });
 
-        // Create a more efficient RAF loop
-        const raf = (time) => {
-            lenis.raf(time);
-            requestAnimationFrame(raf);
+        // Stop scrolling animation when window is resized
+        const handleResize = () => {
+            lenis.stop();
+            setTimeout(() => lenis.start(), 50);
         };
-        requestAnimationFrame(raf);
+
+        window.addEventListener('resize', handleResize);
+
+        // Handle navigation and scroll restoration
+        const handlePageShow = (e) => {
+            if (e.persisted) {
+                lenis.scrollTo(0, { immediate: true });
+            }
+        };
+
+        window.addEventListener('pageshow', handlePageShow);
 
         // Cleanup
         return () => {
             lenis.destroy();
+            window.removeEventListener('resize', handleResize);
+            window.removeEventListener('pageshow', handlePageShow);
+            document.documentElement.style.scrollBehavior = '';
+            gsap.ticker.remove(lenis.raf);
         };
     }, []);
 
@@ -149,12 +170,12 @@ const Home = () => {
                     </div>
                 </div>
             </div>
+            <div>
+                <Ingredients />
+            </div>
             {/* FAQ Section */}
             <div className='relative'>
                 <FAQ />
-            </div>
-            <div>
-                <Ingredients />
             </div>
 
         </main>

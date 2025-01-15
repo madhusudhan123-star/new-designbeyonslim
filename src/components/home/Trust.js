@@ -21,12 +21,9 @@ const Trust = () => {
         const updateDimensions = () => {
             if (containerRef.current) {
                 const rect = containerRef.current.getBoundingClientRect();
-                // Get device pixel ratio for HD rendering
-                const dpr = window.devicePixelRatio || 1;
                 setDimensions({
-                    width: rect.width * dpr,
-                    height: (window.innerWidth < 768 ? window.innerHeight * 0.6 : window.innerHeight * 0.7) * dpr,
-                    scale: dpr
+                    width: rect.width,
+                    height: window.innerWidth < 768 ? window.innerHeight * 0.6 : window.innerHeight * 0.7
                 });
             }
         };
@@ -42,22 +39,6 @@ const Trust = () => {
     useEffect(() => {
         if (!dimensions.width || !dimensions.height) return;
 
-        // Set canvas DPI
-        const canvas = canvasRef.current;
-        const ctx = canvas.getContext('2d');
-        const scale = dimensions.scale || 1;
-
-        // Set actual canvas size to account for device pixel ratio
-        canvas.width = dimensions.width;
-        canvas.height = dimensions.height;
-
-        // Scale all drawing operations
-        ctx.scale(scale, scale);
-
-        // Enable image smoothing
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = 'high';
-
         engineRef.current = Engine.create({
             gravity: { x: 0, y: 0.2 } // Reduced gravity for more floating effect
         });
@@ -67,53 +48,44 @@ const Trust = () => {
         const wallThickness = 30;
         const padding = 10;
 
-        // Create all four walls with adjusted positions
         const walls = [
             // Bottom wall
             Bodies.rectangle(
-                dimensions.width / (2 * scale),
-                dimensions.height / scale,
-                dimensions.width / scale,
-                wallThickness,
-                { isStatic: true }
-            ),
-            // Top wall
-            Bodies.rectangle(
-                dimensions.width / (2 * scale),
-                0,
-                dimensions.width / scale,
+                dimensions.width / 2,
+                dimensions.height - wallThickness / 2,
+                dimensions.width - padding * 2,
                 wallThickness,
                 { isStatic: true }
             ),
             // Left wall
             Bodies.rectangle(
-                0,
-                dimensions.height / (2 * scale),
+                -wallThickness / 2 + padding,
+                dimensions.height / 2,
                 wallThickness,
-                dimensions.height / scale,
+                dimensions.height,
                 { isStatic: true }
             ),
             // Right wall
             Bodies.rectangle(
-                dimensions.width / scale,
-                dimensions.height / (2 * scale),
+                dimensions.width - wallThickness / 2 - padding,
+                dimensions.height / 2,
                 wallThickness,
-                dimensions.height / scale,
+                dimensions.height,
                 { isStatic: true }
             )
         ];
 
         World.add(engine.world, walls);
 
-        // Adjust initial word positions to start within bounds
+        // Initialize words with immediate fall
         wordsRef.current = WORDS.map((word, index) => {
             const isMobile = window.innerWidth < 768;
             const width = isMobile ? (word.length * 6 + 12) : (word.length * 12 + 30);
             const height = isMobile ? 24 : 48;
             
-            // Spread words across the canvas area with padding
-            const x = (padding + width/2) + (Math.random() * (dimensions.width/scale - width - padding*2));
-            const y = (padding + height/2) + (Math.random() * (dimensions.height/scale - height - padding*2));
+            // Spread words across the top of the canvas
+            const x = Math.random() * (dimensions.width - width);
+            const y = -Math.random() * 500; // Random starting heights above viewport
 
             return {
                 word,
@@ -124,7 +96,7 @@ const Trust = () => {
                     height,
                     {
                         friction: 0.05,
-                        restitution: 0.5, // Increased for better bouncing
+                        restitution: 0.3,
                         density: 0.002,
                     }
                 ),
@@ -147,6 +119,7 @@ const Trust = () => {
 
         const animate = () => {
             Engine.update(engine);
+            const ctx = canvasRef.current.getContext('2d');
             ctx.clearRect(0, 0, dimensions.width, dimensions.height);
 
             // Mouse interaction
@@ -167,65 +140,31 @@ const Trust = () => {
                 });
             }
 
-            // Enhanced word rendering
+            // Draw words
             wordsRef.current.forEach(wordObj => {
                 const { body, word } = wordObj;
                 const { x, y } = body.position;
                 const angle = body.angle;
 
                 ctx.save();
-                ctx.translate(x / scale, y / scale);
+                ctx.translate(x, y);
                 ctx.rotate(angle);
 
                 const isMobile = window.innerWidth < 768;
-                const fontSize = isMobile ? 12 : 24;
-                const width = isMobile ? (word.length * 6 + 12) : (word.length * 12 + 30);
-                const height = isMobile ? 24 : 48;
-                const borderRadius = isMobile ? 6 : 12;
+                const fontSize = isMobile ? '12px' : '24px'; // Doubled font size
+                const width = isMobile ? (word.length * 6 + 12) : (word.length * 12 + 30); // Doubled
+                const height = isMobile ? 24 : 48; // Doubled
+                const borderRadius = isMobile ? 6 : 12; // Doubled border radius
 
-                // Add shadow effect
-                ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
-                ctx.shadowBlur = 10;
-                ctx.shadowOffsetX = 2;
-                ctx.shadowOffsetY = 2;
-
-                // Draw box with enhanced quality
                 ctx.fillStyle = wordObj.color;
                 ctx.beginPath();
-                
-                // Manually draw rounded rectangle for better quality
-                const rad = borderRadius;
-                const right = width/2;
-                const left = -width/2;
-                const top = -height/2;
-                const bottom = height/2;
-
-                ctx.beginPath();
-                ctx.moveTo(left + rad, top);
-                ctx.lineTo(right - rad, top);
-                ctx.quadraticCurveTo(right, top, right, top + rad);
-                ctx.lineTo(right, bottom - rad);
-                ctx.quadraticCurveTo(right, bottom, right - rad, bottom);
-                ctx.lineTo(left + rad, bottom);
-                ctx.quadraticCurveTo(left, bottom, left, bottom - rad);
-                ctx.lineTo(left, top + rad);
-                ctx.quadraticCurveTo(left, top, left + rad, top);
-                ctx.closePath();
+                ctx.roundRect(-width / 2, -height / 2, width, height, borderRadius);
                 ctx.fill();
 
-                // Draw text with enhanced quality
-                ctx.shadowColor = 'transparent';
                 ctx.fillStyle = '#ffffff';
-                ctx.font = `${fontSize}px 'Inter', Arial`;
+                ctx.font = `${fontSize} 'Inter', Arial`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                
-                // Add slight text shadow for better readability
-                ctx.shadowColor = 'rgba(0, 0, 0, 0.1)';
-                ctx.shadowBlur = 2;
-                ctx.shadowOffsetX = 1;
-                ctx.shadowOffsetY = 1;
-                
                 ctx.fillText(word.toLowerCase(), 0, 0);
 
                 ctx.restore();
@@ -348,10 +287,6 @@ const Trust = () => {
                 ref={canvasRef}
                 width={dimensions.width}
                 height={dimensions.height}
-                style={{
-                    width: dimensions.width / (dimensions.scale || 1),
-                    height: dimensions.height / (dimensions.scale || 1)
-                }}
                 onMouseMove={handleMouseMove}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
