@@ -14,6 +14,7 @@ import why1 from '../assets/why1.jpeg';
 import why2 from '../assets/why2.png';
 import why3 from '../assets/why3.png';
 import why4 from '../assets/why4.png';
+import Ingredients from '../components/home/Ingredients';
 
 
 gsap.registerPlugin(ScrollTrigger);
@@ -151,6 +152,9 @@ const Home = () => {
             {/* FAQ Section */}
             <div className='relative'>
                 <FAQ />
+            </div>
+            <div>
+                <Ingredients />
             </div>
 
         </main>

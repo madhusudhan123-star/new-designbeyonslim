@@ -5,6 +5,7 @@
   "dependencies": {
     "@studio-freight/lenis": "^1.0.42",
     "cra-template": "1.2.0",
+    "framer-motion": "^11.18.0",
     "gsap": "^3.12.5",
     "locomotive-scroll": "^4.1.4",
     "matter-js": "^0.20.0",

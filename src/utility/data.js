@@ -1,3 +1,8 @@
+import kapoor from '../assets/kapoor.jpg';
+import nagarmotha from '../assets/nagarmotha.webp';
+import sonth from '../assets/sonth.jpg';
+import taleespatra from '../assets/taleespatra.jpg';
+import chabya from '../assets/chabya.jpg';
 export const navigationLinks = [
     {
         id: 'About',
@@ -524,4 +529,36 @@ export const why= {
     para3: "Ayurvedic Health Experts",
     title4: "Natural Ingredients",
     para4: "Carefully handpicked and sourced"
-}
+};
+
+export const ingredients = {
+    title: "KEY INGREDIENTS",
+    items: [
+        {
+            "title": "Kapoor",
+            "description": "Derived from the wood of the camphor tree, Kapoor is traditionally used in aromatherapy and religious rituals for its soothing fragrance and potential health benefits.",
+            "image": kapoor
+        },
+        {
+            "title": "Nagarmotha",
+            "description": "Also known as Nut Grass, Nagarmotha is utilized in Ayurveda to treat disturbances caused by vitiation of pitta, and is traditionally used to quench hard throat during summers and fevers.",
+            "image": nagarmotha
+        },
+        {
+            "title": "Chabya",
+            "description": "Chabya, or Piper chaba, is a traditional herb known for its digestive properties and is often used in formulations to support gastrointestinal health.",
+            "image": chabya
+        },
+        {
+            "title": "Sonth",
+            "description": "Sonth, or dried ginger, is renowned for its anti-inflammatory properties and is commonly used to aid digestion and alleviate nausea.",
+            "image": sonth
+        },
+        {
+            "title": "Taleespatra",
+            "description": "Taleespatra, derived from the Himalayan Yew, is traditionally used in Ayurveda for its potential benefits in respiratory health and overall vitality.",
+            "image": taleespatra
+        }
+    ]
+    
+};
