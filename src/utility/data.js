@@ -397,7 +397,7 @@ export const ENGLISH = {
         sections: [
             {
                 heading: "Welcome to Beyondslim!",
-                content: "These terms and conditions outline the rules and regulations for the use of Beyondslim Website, located at https://www.beyondslim.in , A product of Pain Relief Oil. By accessing this website we assume you accept these terms and conditions. Do not continue to use Beyondslim if you do not agree to take all of the terms and conditions stated on this page."
+                content: "These terms and conditions outline the rules and regulations for the use of Beyondslim Website, located at https://www.beyondslim.in . By accessing this website we assume you accept these terms and conditions. Do not continue to use Beyondslim if you do not agree to take all of the terms and conditions stated on this page."
             },
             {
                 heading: "Terminology",
