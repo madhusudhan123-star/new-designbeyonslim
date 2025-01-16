@@ -8,10 +8,9 @@ const NavbarComponent = () => {
     const [isOpen, setIsOpen] = useState(false);
 
     const socialIcons = [
-        { icon: <FaFacebookF />, link: 'https://facebook.com' },
-        { icon: <FaTwitter />, link: 'https://twitter.com' },
-        { icon: <FaInstagram />, link: 'https://instagram.com' },
-        { icon: <FaLinkedinIn />, link: 'https://linkedin.com' }
+        { icon: <FaFacebookF />, link: 'https://www.facebook.com/people/Beyond-Slim-Body-Slimming-Oil/61559800233749/' },
+        { icon: <FaTwitter />, link: 'https://x.com/slimming_oil' },
+        { icon: <FaInstagram />, link: 'https://www.instagram.com/beyondslimmingoil/' },
     ];
 
     return (

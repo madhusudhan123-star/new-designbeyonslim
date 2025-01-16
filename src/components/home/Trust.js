@@ -340,7 +340,7 @@ const Trust = () => {
                     </h1>
                 </div>
                 {/* Changed background from bg-gray-500 to bg-white */}
-                <div className='w-full h-[60vh] md:h-[90vh] relative bg-white overflow-hidden rounded-2xl md:rounded-3xl flex items-center justify-center'>
+                <div className='w-full h-[40vh] md:h-[90vh] relative bg-white overflow-hidden rounded-2xl md:rounded-3xl flex items-center justify-center'>
                     <canvas
                         ref={canvasRef}
                         style={{
