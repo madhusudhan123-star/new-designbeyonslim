@@ -167,7 +167,7 @@ const Second = () => {
                             className="w-[400px] h-[400px] sm:w-[500px] sm:h-[500px] md:w-[600px] md:h-[600px] rounded-full overflow-hidden shadow-2xl relative" // Increased sizes
                         >
                             <iframe
-                                src="https://www.youtube.com/embed/AxYbPlLk79M?autoplay=0&mute=0"
+                                src="https://www.youtube.com/embed/AxYbPlLk79M?autoplay=1&mute=0&loop=1&playlist=AxYbPlLk79M"
                                 title="Video Player"
                                 className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[250%] h-[250%]" // Increased width and height percentage
                                 frameBorder="0"

@@ -31,7 +31,7 @@ export const header = {
     animationSequence: [
         'Effortless Slimming',
         1000,
-        'Visible Results Fast',
+        'Fast Visible Results',
         1000,
         'Natural Ingredients',
         1000,
@@ -180,7 +180,7 @@ export const footerData = {
                 { text: "Product", href: "/product" },
                 { text: "Contact Us", href: "/contact" },
                 { text: "FAQ", href: "/faq" }
-                
+
             ]
         },
         {
@@ -519,8 +519,8 @@ export const productPage = {
     }
 };
 
-export const why= {
-    maintitle:"Why BeyondSlim",
+export const why = {
+    maintitle: "Why BeyondSlim",
     title1: "Health Outcomes",
     para1: "Ayurvedic solutions delivered thoughtfully",
     title2: "Bespoke Ayurveda",
@@ -560,5 +560,5 @@ export const ingredients = {
             "image": taleespatra
         }
     ]
-    
+
 };

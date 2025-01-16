@@ -73,7 +73,7 @@ const About = () => {
         // Animation loop
         const animate = () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
+
             particles.forEach((particle, index) => {
                 particle.update();
                 particle.draw();
@@ -94,7 +94,7 @@ const About = () => {
 
                     if (distance < 100) {
                         ctx.beginPath();
-                        ctx.strokeStyle = `rgba(59, 130, 246, ${0.1 - distance/1000})`;
+                        ctx.strokeStyle = `rgba(59, 130, 246, ${0.1 - distance / 1000})`;
                         ctx.lineWidth = 1;
                         ctx.moveTo(particles[i].x, particles[i].y);
                         ctx.lineTo(particles[j].x, particles[j].y);
@@ -152,8 +152,8 @@ const About = () => {
                 <div className="container mx-auto px-4 text-center">
                     <h2 className="text-4xl md:text-5xl font-bold mb-12 text-blue-600">Our Mission</h2>
                     <p className="text-lg md:text-xl max-w-4xl mx-auto leading-relaxed text-gray-700">
-                        At Beyond Slim, we're committed to providing natural, effective solutions for your wellness journey. 
-                        Our products combine ancient Ayurvedic wisdom with modern scientific research to deliver 
+                        At Beyond Slim, we're committed to providing natural, effective solutions for your wellness journey.
+                        Our products combine ancient Ayurvedic wisdom with modern scientific research to deliver
                         exceptional results while maintaining the ht6ighest standards of quality and safety.
                     </p>
                 </div>
@@ -188,17 +188,17 @@ const About = () => {
                             </div>
                             {/* Mute/Unmute Indicator */}
                             <div className="absolute top-4 right-4 bg-black/50 p-2 rounded-full">
-                                <svg 
+                                <svg
                                     className="w-6 h-6 text-white"
-                                    fill="none" 
-                                    viewBox="0 0 24 24" 
+                                    fill="none"
+                                    viewBox="0 0 24 24"
                                     stroke="currentColor"
                                 >
-                                    <path 
-                                        strokeLinecap="round" 
-                                        strokeLinejoin="round" 
-                                        strokeWidth={2} 
-                                        d={video1Ref?.current?.muted ? 
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d={video1Ref?.current?.muted ?
                                             "M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" :
                                             "M15.536 8.464a5 5 0 010 7.072M12 6.253v13494C12 18.891 10.923 18.337 10.293 17.707L5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v1.253zM17.657 16.657l1.414-1.414a4 4 0 000-5.656l-1.414-1.414"}
                                     />
@@ -228,17 +228,17 @@ const About = () => {
                             </div>
                             {/* Mute/Unmute Indicator */}
                             <div className="absolute top-4 right-4 bg-black/50 p-2 rounded-full">
-                                <svg 
+                                <svg
                                     className="w-6 h-6 text-white"
-                                    fill="none" 
-                                    viewBox="0 0 24 24" 
+                                    fill="none"
+                                    viewBox="0 0 24 24"
                                     stroke="currentColor"
                                 >
-                                    <path 
-                                        strokeLinecap="round" 
-                                        strokeLinejoin="round" 
-                                        strokeWidth={2} 
-                                        d={video2Ref?.current?.muted ? 
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d={video2Ref?.current?.muted ?
                                             "M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" :
                                             "M15.536 8.464a5 5 0 010 7.072M12 6.253v13494C12 18.891 10.923 18.337 10.293 17.707L5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v1.253zM17.657 16.657l1.414-1.414a4 4 0 000-5.656l-1.414-1.414"}
                                     />
@@ -250,47 +250,7 @@ const About = () => {
             </section>
 
             {/* Benefits Grid Section with semi-transparent background */}
-            <section className="py-24 bg-white/90">
-                <div className="container mx-auto px-4">
-                    <h2 className="text-4xl md:text-5xl font-bold text-center mb-20 text-blue-600">
-                        {why.maintitle}
-                    </h2>
-                    <div className="benefits-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-                        {/* Card 1 */}
-                        <div className="flex flex-col items-center text-center transform hover:scale-105 transition-transform duration-300">
-                            <div className="w-24 h-24 mb-6 p-4 bg-blue-100 rounded-full flex items-center justify-center">
-                                <img src={why1} alt="Natural Ingredients" className="w-16 h-16 object-contain" />
-                            </div>
-                            <h3 className="text-2xl font-bold text-blue-600 mb-4">{why.title4}</h3>
-                            <p className="text-gray-600 leading-relaxed">{why.para4}</p>
-                        </div>
-                        {/* Card 2 */}
-                        <div className="flex flex-col items-center text-center transform hover:scale-105 transition-transform duration-300">
-                            <div className="w-24 h-24 mb-6 p-4 bg-blue-100 rounded-full flex items-center justify-center">
-                                <img src={why2} alt="Bespoke Solutions" className="w-16 h-16 object-contain" />
-                            </div>
-                            <h3 className="text-2xl font-bold text-blue-600 mb-4">{why.title3}</h3>
-                            <p className="text-gray-600 leading-relaxed">{why.para3}</p>
-                        </div>
-                        {/* Card 3 */}
-                        <div className="flex flex-col items-center text-center transform hover:scale-105 transition-transform duration-300">
-                            <div className="w-24 h-24 mb-6 p-4 bg-blue-100 rounded-full flex items-center justify-center">
-                                <img src={why3} alt="Health Outcomes" className="w-16 h-16 object-contain" />
-                            </div>
-                            <h3 className="text-2xl font-bold text-blue-600 mb-4">{why.title1}</h3>
-                            <p className="text-gray-600 leading-relaxed">{why.para1}</p>
-                        </div>
-                        {/* Card 4 */}
-                        <div className="flex flex-col items-center text-center transform hover:scale-105 transition-transform duration-300">
-                            <div className="w-24 h-24 mb-6 p-4 bg-blue-100 rounded-full flex items-center justify-center">
-                                <img src={why4} alt="Real Support" className="w-16 h-16 object-contain" />
-                            </div>
-                            <h3 className="text-2xl font-bold text-blue-600 mb-4">{why.title2}</h3>
-                            <p className="text-gray-600 leading-relaxed">{why.para2}</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
+
 
             {/* Call to Action Section */}
             <section className="py-24 bg-gradient-to-r from-blue-600/95 to-blue-700/95 text-white relative">
@@ -299,8 +259,8 @@ const About = () => {
                     <p className="text-xl mb-12 max-w-2xl mx-auto opacity-90">
                         Join thousands of satisfied customers who have transformed their lives with Beyond Slim.
                     </p>
-                    <a 
-                        href="/product" 
+                    <a
+                        href="/product"
                         className="inline-block bg-white text-blue-600 px-12 py-5 rounded-full text-xl font-bold 
                         hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-lg"
                     >
@@ -308,8 +268,8 @@ const About = () => {
                     </a>
                 </div>
             </section>
-                        {/* Product Details Section */}
-                        <section className="relative  min-h-screen z-10 px-4 py-20">
+            {/* Product Details Section */}
+            <section className="relative  min-h-screen z-10 px-4 py-20">
                 <div className="max-w-6xl mx-auto">
                     <h2 className="text-4xl md:text-6xl text-black font-bold mb-12 text-center">
                         {productPage.features.title}

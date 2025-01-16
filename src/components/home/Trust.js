@@ -6,24 +6,21 @@ const Trust = () => {
     const canvasRef = useRef(null);
     const engineRef = useRef(null);
     const wordsRef = useRef([]);
-    const containerRef = useRef(null);
     const requestRef = useRef(null);
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const [isMouseInCanvas, setIsMouseInCanvas] = useState(false);
-    const [isBouncing, setIsBouncing] = useState(false);
-    const bounceIntervalRef = useRef(null);
 
     const WORDS = trustWords;
     const COLORS = trustColors;
 
     useEffect(() => {
         const updateDimensions = () => {
-            if (containerRef.current) {
-                const rect = containerRef.current.getBoundingClientRect();
+            const container = canvasRef.current?.parentElement;
+            if (container) {
                 setDimensions({
-                    width: rect.width,
-                    height: window.innerWidth < 768 ? window.innerHeight * 0.6 : window.innerHeight * 0.7
+                    width: container.offsetWidth,
+                    height: container.offsetHeight
                 });
             }
         };
@@ -31,98 +28,105 @@ const Trust = () => {
         updateDimensions();
         window.addEventListener('resize', updateDimensions);
 
-        return () => {
-            window.removeEventListener('resize', updateDimensions);
-        };
+        return () => window.removeEventListener('resize', updateDimensions);
     }, []);
 
     useEffect(() => {
         if (!dimensions.width || !dimensions.height) return;
 
-        engineRef.current = Engine.create({
-            gravity: { x: 0, y: 0.2 } // Reduced gravity for more floating effect
-        });
-
+        engineRef.current = Engine.create();
         const engine = engineRef.current;
 
-        const wallThickness = 30;
-        const padding = 10;
+        // Create boundaries with the same setup as the previous code
+        const ground = Bodies.rectangle(
+            dimensions.width / 2,
+            dimensions.height,
+            dimensions.width * 1.2,
+            60,
+            { isStatic: true }
+        );
 
-        const walls = [
-            // Bottom wall
-            Bodies.rectangle(
-                dimensions.width / 2,
-                dimensions.height - wallThickness / 2,
-                dimensions.width - padding * 2,
-                wallThickness,
-                { isStatic: true }
-            ),
-            // Left wall
-            Bodies.rectangle(
-                -wallThickness / 2 + padding,
-                dimensions.height / 2,
-                wallThickness,
-                dimensions.height,
-                { isStatic: true }
-            ),
-            // Right wall
-            Bodies.rectangle(
-                dimensions.width - wallThickness / 2 - padding,
-                dimensions.height / 2,
-                wallThickness,
-                dimensions.height,
-                { isStatic: true }
-            )
-        ];
+        const ceiling = Bodies.rectangle(
+            dimensions.width / 2,
+            0,
+            dimensions.width * 1.2,
+            60,
+            { isStatic: true }
+        );
 
-        World.add(engine.world, walls);
+        const wallLeft = Bodies.rectangle(
+            0,
+            dimensions.height / 2,
+            60,
+            dimensions.height * 1.2,
+            { isStatic: true }
+        );
 
-        // Initialize words with immediate fall
+        const wallRight = Bodies.rectangle(
+            dimensions.width,
+            dimensions.height / 2,
+            60,
+            dimensions.height * 1.2,
+            { isStatic: true }
+        );
+
+        World.add(engine.world, [ground, ceiling, wallLeft, wallRight]);
+
+        // Create words with enhanced positioning and sizing
         wordsRef.current = WORDS.map((word, index) => {
             const isMobile = window.innerWidth < 768;
-            const width = isMobile ? (word.length * 6 + 12) : (word.length * 12 + 30);
-            const height = isMobile ? 24 : 48;
-            
-            // Spread words across the top of the canvas
-            const x = Math.random() * (dimensions.width - width);
-            const y = -Math.random() * 500; // Random starting heights above viewport
+            const boxWidth = isMobile ?
+                (word.length * 15 + 60) :
+                Math.min((word.length * 20 + 100), dimensions.width * 0.25);
+            const boxHeight = isMobile ? 60 : 80;
+            const columns = 3;
+            const row = Math.floor(index / columns);
+            const col = index % columns;
 
             return {
                 word,
                 body: Bodies.rectangle(
-                    x,
-                    y,
-                    width,
-                    height,
+                    (col + 1) * (dimensions.width / (columns + 1)),
+                    dimensions.height * 0.3 + (row * (isMobile ? 80 : 120)),
+                    boxWidth,
+                    boxHeight,
                     {
-                        friction: 0.05,
-                        restitution: 0.3,
-                        density: 0.002,
+                        friction: 0.3,
+                        restitution: 0.6,
+                        density: isMobile ? 0.002 : 0.001
                     }
                 ),
                 color: COLORS[Math.floor(Math.random() * COLORS.length)],
+                targetColor: '#ffffff',
+                isExploding: false,
+                explosionRadius: 0
             };
         });
 
         World.add(engine.world, wordsRef.current.map(w => w.body));
 
+        // Enhanced mouse control with same settings as previous code
         const mouse = Mouse.create(canvasRef.current);
         const mouseConstraint = MouseConstraint.create(engine, {
             mouse,
             constraint: {
-                stiffness: 0.2,
+                stiffness: 0.1,
                 render: { visible: false }
             }
         });
 
         World.add(engine.world, mouseConstraint);
 
+        // Modified animation loop with white background
         const animate = () => {
             Engine.update(engine);
             const ctx = canvasRef.current.getContext('2d');
-            ctx.clearRect(0, 0, dimensions.width, dimensions.height);
 
-            // Mouse interaction
+            // Set white background
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, dimensions.width, dimensions.height);
+
+            // Mouse attraction behavior
             if (isMouseInCanvas) {
                 wordsRef.current.forEach(wordObj => {
                     const { body } = wordObj;
@@ -130,8 +134,8 @@ const Trust = () => {
                     const dy = mousePos.y - body.position.y;
                     const distance = Math.sqrt(dx * dx + dy * dy);
 
-                    if (distance < 150) {
-                        const force = 0.00001 * (1 - distance / 150);
+                    if (distance < 200) {
+                        const force = 0.000015;
                         Body.applyForce(body, body.position, {
                             x: dx * force,
                             y: dy * force
@@ -140,9 +144,9 @@ const Trust = () => {
                 });
             }
 
-            // Draw words
+            // Modified word rendering to ensure visibility on white background
             wordsRef.current.forEach(wordObj => {
-                const { body, word } = wordObj;
+                const { body, word, isExploding, explosionRadius } = wordObj;
                 const { x, y } = body.position;
                 const angle = body.angle;
 
@@ -150,22 +154,56 @@ const Trust = () => {
                 ctx.translate(x, y);
                 ctx.rotate(angle);
 
+                if (isExploding) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = `rgba(255, 200, 0, ${1 - explosionRadius / 100})`;
+                    ctx.arc(0, 0, explosionRadius * 2, 0, Math.PI * 2);
+                    ctx.stroke();
+                    wordObj.explosionRadius += 5;
+                    if (wordObj.explosionRadius > 100) {
+                        wordObj.isExploding = false;
+                        wordObj.explosionRadius = 0;
+                    }
+                }
+
                 const isMobile = window.innerWidth < 768;
-                const fontSize = isMobile ? '12px' : '24px'; // Doubled font size
-                const width = isMobile ? (word.length * 6 + 12) : (word.length * 12 + 30); // Doubled
-                const height = isMobile ? 24 : 48; // Doubled
-                const borderRadius = isMobile ? 6 : 12; // Doubled border radius
+                const desiredWidth = isMobile ?
+                    (word.length * 15 + 60) :
+                    Math.min((word.length * 20 + 100), dimensions.width * 0.25);
+                const height = isMobile ? 60 : 80;
+
+                let fontSize = isMobile ? 20 : 32;
+                ctx.font = `${fontSize}px Arial`;
+                let textWidth = ctx.measureText(word.toUpperCase()).width;
+                const padding = 20;
+
+                while (textWidth > (desiredWidth - padding * 2) && fontSize > 12) {
+                    fontSize--;
+                    ctx.font = `${fontSize}px Arial`;
+                    textWidth = ctx.measureText(word.toUpperCase()).width;
+                }
+
+                const finalWidth = Math.max(desiredWidth, textWidth + padding * 2);
+
+                // Enhanced shadow effects
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+                ctx.shadowBlur = 15;
+                ctx.shadowOffsetX = 5;
+                ctx.shadowOffsetY = 5;
 
                 ctx.fillStyle = wordObj.color;
                 ctx.beginPath();
-                ctx.roundRect(-width / 2, -height / 2, width, height, borderRadius);
+                ctx.roundRect(-finalWidth / 2, -height / 2, finalWidth, height, isMobile ? 8 : 12);
                 ctx.fill();
 
+                ctx.shadowColor = 'none';
+                ctx.shadowOffsetX = 0;
+                ctx.shadowOffsetY = 0;
                 ctx.fillStyle = '#ffffff';
-                ctx.font = `${fontSize} 'Inter', Arial`;
+                ctx.font = `${fontSize}px Arial`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillText(word.toLowerCase(), 0, 0);
+                ctx.fillText(word.toUpperCase(), 0, 0);
 
                 ctx.restore();
             });
@@ -174,14 +212,6 @@ const Trust = () => {
         };
 
         requestRef.current = requestAnimationFrame(animate);
-
-        // Apply immediate downward force to all words
-        wordsRef.current.forEach(wordObj => {
-            Body.setVelocity(wordObj.body, { 
-                x: (Math.random() - 0.5) * 2, // Small random horizontal velocity
-                y: 10 + Math.random() * 5 // Random downward velocity
-            });
-        });
 
         return () => {
             if (requestRef.current) {
@@ -192,71 +222,96 @@ const Trust = () => {
         };
     }, [dimensions]);
 
+    // Enhanced scroll effect with bounce animation
     useEffect(() => {
-        const applyBounceForce = () => {
-            if (!wordsRef.current) return;
+        let lastScrollY = window.scrollY;
+        const handleScroll = () => {
+            const currentScrollY = window.scrollY;
+            const scrollDelta = currentScrollY - lastScrollY;
+            lastScrollY = currentScrollY;
 
             wordsRef.current.forEach(wordObj => {
-                const randomForceX = (Math.random() - 0.5) * 0.006; // Increased horizontal force
-                const upwardForce = -Math.random() * 0.01; // Increased upward force
-                
                 Body.applyForce(
                     wordObj.body,
                     { x: wordObj.body.position.x, y: wordObj.body.position.y },
-                    { x: randomForceX, y: upwardForce }
+                    {
+                        x: (Math.random() - 0.5) * 0.001 * scrollDelta,
+                        y: -0.002 * scrollDelta
+                    }
                 );
 
-                // Increased rotation force
-                const rotationForce = (Math.random() - 0.5) * 0.04;
-                Body.setAngularVelocity(wordObj.body, rotationForce);
-
-                // Add random impulses for more dynamic movement
-                if (Math.random() > 0.7) {
-                    const impulseX = (Math.random() - 0.5) * 0.5;
-                    const impulseY = -Math.random() * 0.8;
-                    Body.setVelocity(wordObj.body, {
-                        x: wordObj.body.velocity.x + impulseX,
-                        y: wordObj.body.velocity.y + impulseY
-                    });
-                }
+                Body.setAngularVelocity(
+                    wordObj.body,
+                    (Math.random() - 0.5) * 0.01 * scrollDelta
+                );
             });
         };
 
-        const handleScroll = () => {
-            if (!isBouncing) {
-                setIsBouncing(true);
-                
-                // Clear any existing interval
-                if (bounceIntervalRef.current) {
-                    clearInterval(bounceIntervalRef.current);
-                }
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
-                // Increased frequency of force application
-                bounceIntervalRef.current = setInterval(applyBounceForce, 50);
+    // Click handlers for word creation and explosion effects
+    const handleClick = (e) => {
+        if (!engineRef.current) return;
 
-                // Stop bouncing after scrolling ends
-                clearTimeout(window._scrollTimeout);
-                window._scrollTimeout = setTimeout(() => {
-                    if (bounceIntervalRef.current) {
-                        clearInterval(bounceIntervalRef.current);
-                    }
-                    setIsBouncing(false);
-                }, 300); // Increased duration of effect
-            }
+        const word = WORDS[Math.floor(Math.random() * WORDS.length)];
+        const isMobile = window.innerWidth < 768;
+        const width = isMobile ?
+            (word.length * 15 + 60) :
+            Math.min((word.length * 20 + 100), dimensions.width * 0.25);
+        const height = isMobile ? 60 : 80;
+
+        const rect = canvasRef.current.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        const newWord = {
+            word,
+            body: Bodies.rectangle(x, y, width, height, {
+                friction: 0.3,
+                restitution: 0.6,
+                density: isMobile ? 0.002 : 0.001
+            }),
+            color: COLORS[Math.floor(Math.random() * COLORS.length)],
+            targetColor: '#ffffff',
+            isExploding: false,
+            explosionRadius: 0
         };
 
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-            if (bounceIntervalRef.current) {
-                clearInterval(bounceIntervalRef.current);
+        wordsRef.current.push(newWord);
+        World.add(engineRef.current.world, newWord.body);
+    };
+
+    const handleDoubleClick = (e) => {
+        const rect = canvasRef.current.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const clickY = e.clientY - rect.top;
+
+        let closestWord = null;
+        let closestDist = Infinity;
+
+        wordsRef.current.forEach(wordObj => {
+            const dx = wordObj.body.position.x - clickX;
+            const dy = wordObj.body.position.y - clickY;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist < closestDist) {
+                closestDist = dist;
+                closestWord = wordObj;
             }
-            if (window._scrollTimeout) {
-                clearTimeout(window._scrollTimeout);
-            }
-        };
-    }, [isBouncing]);
+        });
+
+        if (closestWord && closestDist < 100) {
+            closestWord.isExploding = true;
+            closestWord.explosionRadius = 0;
+            Body.setVelocity(closestWord.body, {
+                x: (Math.random() - 0.5) * 20,
+                y: -Math.random() * 15
+            });
+            Body.setAngularVelocity(closestWord.body, (Math.random() - 0.5) * 0.4);
+        }
+    };
 
     const handleMouseMove = (e) => {
         if (canvasRef.current) {
@@ -277,21 +332,34 @@ const Trust = () => {
     };
 
     return (
-        <div ref={containerRef} className="relative w-full h-[50vh] md:h-[80vh] bg-white overflow-hidden">
-            <div className='w-full h-[30vh] md:h-[40vh] flex justify-center items-start text-center'>
-                <h1 style={{ userSelect: 'none' }} className='text-3xl md:text-7xl font-[600] w-full md:w-2/3 px-4 md:px-0 relative z-10 pt-3 md:pt-6'>
-                    {truse.title}
-                </h1>
+        <div className="w-screen bg-white overflow-hidden flex flex-col gap-8 md:gap-26 items-center justify-center">
+            <div className='container mx-auto my-4 md:my-28 flex flex-col items-center justify-center gap-4 md:gap-0 px-4 md:px-0'>
+                <div className='w-full'>
+                    <h1 className='text-black text-3xl md:text-7xl text-center mb-4 md:mb-0'>
+                        {truse.title}
+                    </h1>
+                </div>
+                {/* Changed background from bg-gray-500 to bg-white */}
+                <div className='w-full h-[60vh] md:h-[90vh] relative bg-white overflow-hidden rounded-2xl md:rounded-3xl flex items-center justify-center'>
+                    <canvas
+                        ref={canvasRef}
+                        style={{
+                            width: '100%',
+                            height: '100%',
+                            background: 'white', // Changed from transparent to white
+                            position: 'relative',
+                            zIndex: 1,
+                            mixBlendMode: 'normal' // Changed from overlay to normal
+                        }}
+                        width={dimensions.width}
+                        height={dimensions.height}
+
+                        onMouseMove={handleMouseMove}
+                        onMouseEnter={handleMouseEnter}
+                        onMouseLeave={handleMouseLeave}
+                    />
+                </div>
             </div>
-            <canvas
-                ref={canvasRef}
-                width={dimensions.width}
-                height={dimensions.height}
-                onMouseMove={handleMouseMove}
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-                className="absolute top-0 left-0 font-raleway font-normal w-full h-[60vh] md:h-[80vh]"
-            />
         </div>
     );
 };
