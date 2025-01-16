@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { RiMenu3Line, RiCloseLine } from 'react-icons/ri';
-import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from 'react-icons/fa';
+import { FaFacebookF, FaInstagram, FaWhatsapp } from 'react-icons/fa';
 import logo from '../assets/logo.png';
 import { navigationLinks } from '../utility/data';
 
@@ -9,8 +9,9 @@ const NavbarComponent = () => {
 
     const socialIcons = [
         { icon: <FaFacebookF />, link: 'https://www.facebook.com/people/Beyond-Slim-Body-Slimming-Oil/61559800233749/' },
-        { icon: <FaTwitter />, link: 'https://x.com/slimming_oil' },
         { icon: <FaInstagram />, link: 'https://www.instagram.com/beyondslimmingoil/' },
+        { icon: <FaWhatsapp />, link: 'https://wa.me/+919908526444', label: 'WhatsApp' }
+
     ];
 
     return (

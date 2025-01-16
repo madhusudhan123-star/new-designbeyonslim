@@ -1,12 +1,11 @@
 import React from 'react';
 import { footerData } from '../utility/data';
-import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn, FaWhatsapp } from 'react-icons/fa';
+import { FaFacebookF, FaInstagram, FaWhatsapp } from 'react-icons/fa';
 import logo from '../assets/logo.png';
 
 const Footer = () => {
     const socialIcons = [
         { icon: <FaFacebookF />, link: 'https://www.facebook.com/people/Beyond-Slim-Body-Slimming-Oil/61559800233749/', label: 'Facebook' },
-        { icon: <FaTwitter />, link: 'https://x.com/slimming_oil', label: 'Twitter' },
         { icon: <FaInstagram />, link: 'https://www.instagram.com/beyondslimmingoil/', label: 'Instagram' },
         { icon: <FaWhatsapp />, link: 'https://wa.me/+919908526444', label: 'WhatsApp' }
     ];

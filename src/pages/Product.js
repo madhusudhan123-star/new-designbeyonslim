@@ -62,7 +62,7 @@ const Product = () => {
                 { start: '#D4A5A5', end: '#E8C3C3' }, // Rose
                 { start: '#9A8194', end: '#B6A0AE' }  // Mauve
             ];
-            
+
             const size = Math.random() * 40 + 20;
             const x = Math.random() * dimensions.width;
             const colorPair = gradientColors[Math.floor(Math.random() * gradientColors.length)];
@@ -133,7 +133,7 @@ const Product = () => {
                     4
                 );
                 ctx.fill();
-                
+
                 ctx.restore();
 
                 if (body.position.y > dimensions.height + 100) {
@@ -214,10 +214,10 @@ const Product = () => {
             >
                 <div className="w-full h-full flex flex-col items-center justify-center relative py-20">
                     {/* Product Display */}
-                    <div className="relative z-20 mb-8">
+                    <div className="relative z-20">
                         <div
                             ref={imageRef}
-                            className="w-[300px] h-[300px] sm:w-[400px] sm:h-[400px] md:w-[500px] md:h-[500px] relative"
+                            className="w-[300px] h-[300px] sm:w-[400px] sm:h-[400px] md:w-[400px] md:h-[400px] relative"
                         >
                             <img
                                 src={product}
