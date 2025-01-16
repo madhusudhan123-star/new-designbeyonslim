@@ -75,10 +75,12 @@ const Trust = () => {
         // Create words with enhanced positioning and sizing
         wordsRef.current = WORDS.map((word, index) => {
             const isMobile = window.innerWidth < 768;
+            // Further decreased boxWidth
             const boxWidth = isMobile ?
-                (word.length * 15 + 60) :
-                Math.min((word.length * 20 + 100), dimensions.width * 0.25);
-            const boxHeight = isMobile ? 60 : 80;
+                (word.length * 10 + 30) :
+                Math.min((word.length * 12 + 50), dimensions.width * 0.15);
+            // Further decreased boxHeight
+            const boxHeight = isMobile ? 40 : 50;
             const columns = 3;
             const row = Math.floor(index / columns);
             const col = index % columns;
@@ -167,15 +169,16 @@ const Trust = () => {
                 }
 
                 const isMobile = window.innerWidth < 768;
+                // Adjust desiredWidth calculation if necessary
                 const desiredWidth = isMobile ?
-                    (word.length * 15 + 60) :
-                    Math.min((word.length * 20 + 100), dimensions.width * 0.25);
-                const height = isMobile ? 60 : 80;
+                    (word.length * 10 + 30) :
+                    Math.min((word.length * 12 + 50), dimensions.width * 0.15);
+                const height = isMobile ? 40 : 50;
 
-                let fontSize = isMobile ? 20 : 32;
+                let fontSize = isMobile ? 14 : 20;
                 ctx.font = `${fontSize}px Arial`;
                 let textWidth = ctx.measureText(word.toUpperCase()).width;
-                const padding = 20;
+                const padding = 15;
 
                 while (textWidth > (desiredWidth - padding * 2) && fontSize > 12) {
                     fontSize--;
@@ -335,12 +338,12 @@ const Trust = () => {
         <div className="w-screen bg-white overflow-hidden flex flex-col gap-8 md:gap-26 items-center justify-center">
             <div className='container mx-auto my-4 md:my-28 flex flex-col items-center justify-center gap-4 md:gap-0 px-4 md:px-0'>
                 <div className='w-full'>
-                    <h1 className='text-black text-3xl md:text-7xl text-center mb-4 md:mb-0'>
+                    <h1 className='text-2xl md:text-5xl text-center mb-4 md:mb-0'>
                         {truse.title}
                     </h1>
                 </div>
                 {/* Changed background from bg-gray-500 to bg-white */}
-                <div className='w-full h-[40vh] md:h-[90vh] relative bg-white overflow-hidden rounded-2xl md:rounded-3xl flex items-center justify-center'>
+                <div className='w-full h-[30vh] md:h-[70vh] relative bg-white overflow-hidden rounded-2xl md:rounded-3xl flex items-center justify-center'>
                     <canvas
                         ref={canvasRef}
                         style={{
