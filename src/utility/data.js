@@ -367,7 +367,7 @@ export const ENGLISH = {
             }
         ],
         footer: {
-            text: "For more information, contact us atisraelitesshopping171@gmail.com"
+            text: "For more information, contact us at israelitesshopping171@gmail.com"
         }
     },
     return: {
