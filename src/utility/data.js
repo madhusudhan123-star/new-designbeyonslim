@@ -396,8 +396,8 @@ export const ENGLISH = {
         lastUpdated: 'Last Updated: December 2024',
         sections: [
             {
-                heading: "Welcome to Dr.Joints!",
-                content: "These terms and conditions outline the rules and regulations for the use of Dr.Joints Website, located at https://www.beyondslim.in , A product of Pain Relief Oil. By accessing this website we assume you accept these terms and conditions. Do not continue to use Dr.Joints if you do not agree to take all of the terms and conditions stated on this page."
+                heading: "Welcome to Beyondslim!",
+                content: "These terms and conditions outline the rules and regulations for the use of Beyondslim Website, located at https://www.beyondslim.in , A product of Pain Relief Oil. By accessing this website we assume you accept these terms and conditions. Do not continue to use Beyondslim if you do not agree to take all of the terms and conditions stated on this page."
             },
             {
                 heading: "Terminology",
@@ -405,24 +405,24 @@ export const ENGLISH = {
             },
             {
                 heading: "Cookies",
-                content: "We employ the use of cookies. By accessing Dr.Joints, you agree to use cookies in agreement with Dr.Joints’s Privacy Policy. Most interactive websites use cookies to let us retrieve the user’s details for each visit. Cookies are used by our website to enable the functionality of certain areas to make it easier for people visiting our website. Some of our affiliate/advertising partners may also use cookies."
+                content: "We employ the use of cookies. By accessing Beyondslim, you agree to use cookies in agreement with Beyondslim’s Privacy Policy. Most interactive websites use cookies to let us retrieve the user’s details for each visit. Cookies are used by our website to enable the functionality of certain areas to make it easier for people visiting our website. Some of our affiliate/advertising partners may also use cookies."
             },
             {
                 heading: "Intellectual Property Rights",
-                content: "Unless otherwise stated, Dr.Joints and/or its licensors own the intellectual property rights for all material on Dr.Joints. All intellectual property rights are reserved. You may access this from Dr.Joints for your personal use subject to restrictions set in these terms and conditions."
+                content: "Unless otherwise stated, Beyondslim and/or its licensors own the intellectual property rights for all material on Beyondslim. All intellectual property rights are reserved. You may access this from Beyondslim for your personal use subject to restrictions set in these terms and conditions."
             },
             {
                 heading: "You Must Not:",
                 content: [
-                    "Republish material from Dr.Joints",
-                    "Sell, rent, or sub-license material from Dr.Joints",
-                    "Reproduce, duplicate, or copy material from Dr.Joints",
-                    "Redistribute content from Dr.Joints"
+                    "Republish material from Beyondslim",
+                    "Sell, rent, or sub-license material from Beyondslim",
+                    "Reproduce, duplicate, or copy material from Beyondslim",
+                    "Redistribute content from Beyondslim"
                 ]
             },
             {
                 heading: "User Comments",
-                content: "Parts of this website offer an opportunity for users to post and exchange opinions and information in certain areas of the website. Dr.Joints does not filter, edit, publish, or review Comments before their presence on the website. Comments do not reflect the views and opinions of Dr.Joints, its agents, and/or affiliates. Comments reflect the views and opinions of the person who posts their views and opinions. To the extent permitted by applicable laws, Dr.Joints shall not be liable for the Comments or any liability, damages, or expenses caused and/or suffered as a result of any use of and/or posting of and/or appearance of the Comments on this website."
+                content: "Parts of this website offer an opportunity for users to post and exchange opinions and information in certain areas of the website. Beyondslim does not filter, edit, publish, or review Comments before their presence on the website. Comments do not reflect the views and opinions of Beyondslim, its agents, and/or affiliates. Comments reflect the views and opinions of the person who posts their views and opinions. To the extent permitted by applicable laws, Beyondslim shall not be liable for the Comments or any liability, damages, or expenses caused and/or suffered as a result of any use of and/or posting of and/or appearance of the Comments on this website."
             },
             {
                 heading: "External Links",
@@ -440,7 +440,7 @@ export const ENGLISH = {
         sections: [
             {
                 title: 'Information We Collect',
-                content: 'This Privacy Policy describes how Dr.Joints Fat and Weight Loss Oil collects, uses, and discloses your information when you use our website https://www.beyondslim.in /\n\nPersonal Information: This includes information that can be used to identify you, such as your name, billing address, shipping address, email address, and phone number. You only provide this information when you contact us through a form on the Site.\n\nNon-Personal Information: This includes information that cannot be used to identify you, such as your browser type, operating system, IP address, browsing activity on the Site, and demographic information (e.g., age, gender). This information is collected automatically when you visit the Site.'
+                content: 'This Privacy Policy describes how Beyondslim Fat and Weight Loss Oil collects, uses, and discloses your information when you use our website https://www.beyondslim.in /\n\nPersonal Information: This includes information that can be used to identify you, such as your name, billing address, shipping address, email address, and phone number. You only provide this information when you contact us through a form on the Site.\n\nNon-Personal Information: This includes information that cannot be used to identify you, such as your browser type, operating system, IP address, browsing activity on the Site, and demographic information (e.g., age, gender). This information is collected automatically when you visit the Site.'
             },
             {
                 title: 'How We Use Your Information',
