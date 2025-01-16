@@ -392,52 +392,41 @@ export const ENGLISH = {
         }
     },
     terms: {
-        title: "Terms and Conditions",
-        lastUpdated: "Last Updated: December 2024",
+        title: 'Terms & Conditions',
+        lastUpdated: 'Last Updated: December 2024',
         sections: [
             {
-                title: "Acceptance of Terms",
-                content: "By downloading, installing, or using the Genius-Baby ('the App'), you agree to be bound by these Terms and Conditions ('Terms'). If you do not agree to these Terms, do not use the App."
+                heading: "Welcome to Dr.Joints!",
+                content: "These terms and conditions outline the rules and regulations for the use of Dr.Joints Website, located at https://www.beyondslim.in , A product of Pain Relief Oil. By accessing this website we assume you accept these terms and conditions. Do not continue to use Dr.Joints if you do not agree to take all of the terms and conditions stated on this page."
             },
             {
-                title: "License",
-                content: "Genius-Baby grants you a limited, non-exclusive, non-transferable, and revocable license to use the App for personal, non-commercial purposes, subject to these Terms."
+                heading: "Terminology",
+                content: "The following terminology applies to these Terms and Conditions, Privacy Statement and Disclaimer Notice, and all Agreements: \"Client\", \"You\" and \"Your\" refers to you, the person who logs on to this website and is compliant with the Company’s terms and conditions. \"The Company\", \"Ourselves\", \"We\", \"Our\" and \"Us\", refers to our Company. \"Party\", \"Parties\", or \"Us\", refers to both the Client and ourselves. All terms refer to the offer, acceptance, and consideration of payment necessary to undertake the process of our assistance to the Client most appropriately for the express purpose of meeting the Client’s needs in respect of the provision of the Company’s stated services, by and subject to, prevailing law of in. Any use of the above terminology or other words in the singular, plural, capitalization, and/or he/she or they, are taken as interchangeable and therefore as referring to the same."
             },
             {
-                title: "User Obligations",
-                content: "You must be at least 18 years old to use the App. You agree to use the App only for lawful purposes and in accordance with these Terms. You must not attempt to interfere with the App's operation or security."
+                heading: "Cookies",
+                content: "We employ the use of cookies. By accessing Dr.Joints, you agree to use cookies in agreement with Dr.Joints’s Privacy Policy. Most interactive websites use cookies to let us retrieve the user’s details for each visit. Cookies are used by our website to enable the functionality of certain areas to make it easier for people visiting our website. Some of our affiliate/advertising partners may also use cookies."
             },
             {
-                title: "Intellectual Property",
-                content: "All content, features, and functionality (including but not limited to text, graphics, logos, and software) are owned by Genius-Baby or its licensors and are protected by copyright and other laws. You agree not to reproduce, duplicate, copy, sell, resell, or exploit any part of the App without our express written permission."
+                heading: "Intellectual Property Rights",
+                content: "Unless otherwise stated, Dr.Joints and/or its licensors own the intellectual property rights for all material on Dr.Joints. All intellectual property rights are reserved. You may access this from Dr.Joints for your personal use subject to restrictions set in these terms and conditions."
             },
             {
-                title: "User-Generated Content",
-                content: "You may be able to submit, upload, or otherwise make available content (such as playlists or reviews) through the App. By doing so, you grant Genius-Baby a worldwide, royalty-free, perpetual, irrevocable, non-exclusive, and sublicensable right to use, modify, distribute, and display such content in connection with the App."
+                heading: "You Must Not:",
+                content: [
+                    "Republish material from Dr.Joints",
+                    "Sell, rent, or sub-license material from Dr.Joints",
+                    "Reproduce, duplicate, or copy material from Dr.Joints",
+                    "Redistribute content from Dr.Joints"
+                ]
             },
             {
-                title: "Privacy",
-                content: "Your privacy is important to us. Please review our Privacy Policy to understand how we collect, use, and protect your information."
+                heading: "User Comments",
+                content: "Parts of this website offer an opportunity for users to post and exchange opinions and information in certain areas of the website. Dr.Joints does not filter, edit, publish, or review Comments before their presence on the website. Comments do not reflect the views and opinions of Dr.Joints, its agents, and/or affiliates. Comments reflect the views and opinions of the person who posts their views and opinions. To the extent permitted by applicable laws, Dr.Joints shall not be liable for the Comments or any liability, damages, or expenses caused and/or suffered as a result of any use of and/or posting of and/or appearance of the Comments on this website."
             },
             {
-                title: "Termination",
-                content: "We reserve the right to terminate or suspend your access to the App at any time, with or without notice, for any reason, including if you breach these Terms."
-            },
-            {
-                title: "Limitation of Liability",
-                content: "To the fullest extent permitted by law, Genius-Baby App and its affiliates, officers, directors, employees, agents, and licensors shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues, whether incurred directly or indirectly, or any loss of data, use, goodwill, or other intangible losses, resulting from:- Your use or inability to use the App;- Any unauthorized access to or use of our servers and/or any personal information stored therein;- Any bugs, viruses, or the like that may be transmitted to or through the App by any third party;- Any errors or omissions in any content."
-            },
-            {
-                title: "Changes to Terms",
-                content: "We may modify these Terms from time to time. We will notify you of any changes by posting the new Terms on the App. Your continued use of the App after the changes are made will constitute your acceptance of the new Terms."
-            },
-            {
-                title: "Governing Law",
-                content: "These Terms shall be governed by and construed in accordance with the laws of India, without regard to its conflict of law provisions."
-            },
-            {
-                title: "Contact Information",
-                content: "If you have any questions about these Terms, please contact us at srilogishyd@gmail.com."
+                heading: "External Links",
+                content: "We shall not be held responsible for any content that appears on your Website. You agree to protect and defend us against all claims that are arising on your Website. No link(s) should appear on any Website that may be interpreted as libelous, obscene or criminal, or which infringes, otherwise violates, or advocates the infringement or other violation of, any third-party rights."
             }
         ],
         footer: {
@@ -446,42 +435,42 @@ export const ENGLISH = {
         }
     },
     privacy: {
-        title: "Privacy Policy",
-        lastUpdated: "Last Updated: December 2024",
+        title: 'Privacy Policy',
+        lastUpdated: 'Last Updated: December 2024',
         sections: [
             {
-                title: "Information Collection",
-                content: "We collect personal information that you provide directly to us, such as your name, billing address, shipping address, email address, and phone number. You provide this information when you contact us through a form on the Site. We also collect non-personal information, including browser type, operating system, IP address, browsing activity, and demographic details, automatically when you use the Site."
+                title: 'Information We Collect',
+                content: 'This Privacy Policy describes how Dr.Joints Fat and Weight Loss Oil collects, uses, and discloses your information when you use our website https://www.beyondslim.in /\n\nPersonal Information: This includes information that can be used to identify you, such as your name, billing address, shipping address, email address, and phone number. You only provide this information when you contact us through a form on the Site.\n\nNon-Personal Information: This includes information that cannot be used to identify you, such as your browser type, operating system, IP address, browsing activity on the Site, and demographic information (e.g., age, gender). This information is collected automatically when you visit the Site.'
             },
             {
-                title: "Use of Information",
-                content: "We use personal information to respond to your inquiries and requests. Non-personal information is used to enhance the Site, improve user experience, and support internal marketing efforts. We will not share your personal information with third parties without your consent, except as required by law."
+                title: 'How We Use Your Information',
+                content: 'Personal Information: We will only use your personal information to respond to inquiries and requests. We will not share your personal information with any third parties without your consent, except as required by law.\n\nNon-Personal Information: We use non-personal information to improve the Site and understand how users interact. We may also use non-personal information for internal marketing and promotional purposes.'
             },
             {
-                title: "Cookies and Tracking",
-                content: "We use cookies and similar tracking technologies to collect non-personal information about your usage of the Site. Cookies help us remember your preferences and improve your browsing experience. Login cookies last for two days, screen options cookies last for a year, and additional cookies used during article editing expire after one day. Selecting \"Remember Me\" will extend login persistence to two weeks. Logging out will remove login cookies."
+                title: 'Cookies and Tracking Technologies',
+                content: 'We may use cookies and other tracking technologies to collect non-personal information about your use of the Site. Cookies are small data files that are stored on your device when you visit a website. They allow the website to remember your actions and preferences over time.\n\nIf you visit our login page, we will set a temporary cookie to determine if your browser accepts cookies. This cookie contains no personal data and is discarded when you close your browser.\n\nWhen you log in, we will also set up several cookies to save your login information and your screen display choices. Login cookies last for two days, and screen options cookies last for a year. If you select “Remember Me”, your login will persist for two weeks. If you log out of your account, the login cookies will be removed.\n\nIf you edit or publish an article, an additional cookie will be saved in your browser. This cookie includes no personal data and simply indicates the post ID of the article you just edited. It expires after 1 day.'
             },
             {
-                title: "Third-Party Services",
-                content: "We may use third-party service providers to operate the Site and deliver our services. These providers may have access to non-personal information. Personal information will not be shared with third parties for their marketing purposes without your consent."
+                title: 'Third-Party Service Providers',
+                content: 'We may use third-party service providers to help us operate the Site and deliver our services. These service providers may have access to your non-personal information. We will not share your personal information with any third-party service providers for their marketing purposes without your consent.'
             },
             {
-                title: "Security",
-                content: "We take reasonable steps to protect your information from unauthorized access, disclosure, alteration, or destruction. However, no internet transmission or website is completely secure. We encourage users to take precautions when sharing personal data online."
+                title: 'Security',
+                content: 'We take reasonable steps to protect your information from unauthorized access, disclosure, alteration, or destruction. However, no website or internet transmission is completely secure.'
             },
             {
-                title: "Children's Privacy",
-                content: "The Site is not intended for children under the age of 13. We do not knowingly collect personal information from children under 13. If you believe your child has provided us with personal information, please contact us to remove it."
+                title: 'Children’s Privacy',
+                content: 'The Site is not directed to children under the age of 13. We do not knowingly collect personal information from children under 13. If you are a parent or guardian and you believe that your child has provided us with personal information, please contact us. We will take steps to remove the information from our records.'
             },
             {
-                title: "Policy Updates",
-                content: "This Privacy Policy may be updated periodically. Changes will be posted on the Site, and we encourage you to review this policy regularly to stay informed about our practices."
+                title: 'Changes to this Privacy Policy',
+                content: 'We may update this Privacy Policy from time to time. We will post any changes on the Site. We encourage you to review this Privacy Policy periodically for the latest information on our privacy practices.'
             }
         ],
         footer: {
-            contact: "If you have any questions about our privacy practices, please contact us at israelitesshopping171@gmail.com."
+            contact: 'If you have any questions about this Privacy Policy, please get in touch with us at israelitesshopping171@gmail.com.'
         }
-    }
+    },
 };
 
 export default { ENGLISH };
